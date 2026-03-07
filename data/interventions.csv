@@ -1,321 +1,321 @@
 intervention_id,student_id,intervention_type,date,notes,attendance_before,math_before,attendance_after,math_after
-1,1747,Home Visit,2025-08-24,Home Visit conducted for student 1747,62,55,66,58
-2,79,Counselling Session,2025-06-19,Counselling Session conducted for student 79,55,66,56,67
-3,1916,Uniform Provided,2025-10-02,Uniform Provided conducted for student 1916,59,31,70,39
-4,1869,Parent-Teacher Meeting,2025-06-17,Parent-Teacher Meeting conducted for student 1869,53,58,72,73
-5,366,Bicycle Provided,2025-03-13,Bicycle Provided conducted for student 366,64,29,80,42
-6,830,Scholarship Application,2025-09-09,Scholarship Application conducted for student 830,28,63,39,71
-7,1232,Uniform Provided,2025-07-07,Uniform Provided conducted for student 1232,74,54,84,62
-8,1093,Peer Buddy Assignment,2025-01-22,Peer Buddy Assignment conducted for student 1093,67,68,76,75
-9,1766,Counselling Session,2025-03-08,Counselling Session conducted for student 1766,41,32,52,41
-10,1447,Counselling Session,2025-03-04,Counselling Session conducted for student 1447,52,87,70,100
-11,1510,Home Visit,2025-11-28,Home Visit conducted for student 1510,74,56,80,61
-12,1980,Counselling Session,2025-09-26,Counselling Session conducted for student 1980,56,49,66,57
-13,323,Peer Buddy Assignment,2025-10-21,Peer Buddy Assignment conducted for student 323,68,32,83,44
-14,931,Bicycle Provided,2025-11-26,Bicycle Provided conducted for student 931,60,65,75,77
-15,1139,Peer Buddy Assignment,2025-01-21,Peer Buddy Assignment conducted for student 1139,73,28,89,41
-16,699,Home Visit,2025-07-13,Home Visit conducted for student 699,58,49,72,60
-17,473,Home Visit,2025-02-02,Home Visit conducted for student 473,57,36,66,43
-18,1536,Peer Buddy Assignment,2025-04-16,Peer Buddy Assignment conducted for student 1536,51,49,66,61
-19,1130,Peer Buddy Assignment,2025-07-18,Peer Buddy Assignment conducted for student 1130,45,49,57,58
-20,1609,Scholarship Application,2025-04-09,Scholarship Application conducted for student 1609,54,45,72,59
-21,1130,Bicycle Provided,2025-11-10,Bicycle Provided conducted for student 1130,45,49,57,58
-22,1354,Uniform Provided,2025-01-08,Uniform Provided conducted for student 1354,68,90,82,100
-23,1774,Home Visit,2025-07-16,Home Visit conducted for student 1774,82,58,88,63
-24,679,Bicycle Provided,2025-09-26,Bicycle Provided conducted for student 679,43,41,57,52
-25,1292,Scholarship Application,2025-04-11,Scholarship Application conducted for student 1292,53,36,60,41
-26,1605,Uniform Provided,2025-01-26,Uniform Provided conducted for student 1605,37,50,46,57
-27,80,Scholarship Application,2025-12-04,Scholarship Application conducted for student 80,61,26,76,38
-28,355,Scholarship Application,2025-02-11,Scholarship Application conducted for student 355,63,83,69,88
-29,1465,Home Visit,2025-11-28,Home Visit conducted for student 1465,72,50,87,62
-30,1845,Uniform Provided,2025-11-02,Uniform Provided conducted for student 1845,67,49,74,54
-31,323,Counselling Session,2025-09-16,Counselling Session conducted for student 323,68,32,80,41
-32,772,Scholarship Application,2025-09-09,Scholarship Application conducted for student 772,66,32,80,43
-33,1075,Parent-Teacher Meeting,2025-05-02,Parent-Teacher Meeting conducted for student 1075,44,32,50,36
-34,850,Scholarship Application,2025-02-03,Scholarship Application conducted for student 850,45,60,51,64
-35,1730,Parent-Teacher Meeting,2025-08-02,Parent-Teacher Meeting conducted for student 1730,38,17,51,27
-36,711,Counselling Session,2025-03-08,Counselling Session conducted for student 711,64,31,83,46
-37,1439,Extra Coaching,2025-01-07,Extra Coaching conducted for student 1439,64,52,72,58
-38,84,Uniform Provided,2025-02-11,Uniform Provided conducted for student 84,57,85,69,95
-39,642,Bicycle Provided,2025-09-20,Bicycle Provided conducted for student 642,52,39,53,40
-40,1621,Home Visit,2025-10-21,Home Visit conducted for student 1621,27,40,35,47
-41,1130,Uniform Provided,2025-10-15,Uniform Provided conducted for student 1130,45,49,55,57
-42,1611,Peer Buddy Assignment,2025-04-21,Peer Buddy Assignment conducted for student 1611,51,35,70,50
-43,1562,Parent-Teacher Meeting,2025-06-14,Parent-Teacher Meeting conducted for student 1562,59,64,69,72
-44,622,Parent-Teacher Meeting,2025-07-16,Parent-Teacher Meeting conducted for student 622,73,33,84,42
-45,1038,Parent-Teacher Meeting,2025-01-25,Parent-Teacher Meeting conducted for student 1038,38,50,57,65
-46,1455,Bicycle Provided,2025-12-28,Bicycle Provided conducted for student 1455,46,64,54,70
-47,211,Parent-Teacher Meeting,2025-01-03,Parent-Teacher Meeting conducted for student 211,58,64,66,70
-48,1712,Peer Buddy Assignment,2025-10-11,Peer Buddy Assignment conducted for student 1712,70,50,79,57
-49,389,Uniform Provided,2025-09-22,Uniform Provided conducted for student 389,67,45,71,48
-50,208,Counselling Session,2025-06-19,Counselling Session conducted for student 208,90,34,100,49
-51,731,Extra Coaching,2025-08-23,Extra Coaching conducted for student 731,69,62,87,76
-52,44,Peer Buddy Assignment,2025-11-15,Peer Buddy Assignment conducted for student 44,74,39,78,42
-53,105,Bicycle Provided,2025-09-25,Bicycle Provided conducted for student 105,38,63,52,74
-54,130,Home Visit,2025-03-19,Home Visit conducted for student 130,58,10,74,23
-55,1426,Extra Coaching,2025-09-12,Extra Coaching conducted for student 1426,33,53,51,67
-56,1564,Parent-Teacher Meeting,2025-11-06,Parent-Teacher Meeting conducted for student 1564,70,46,89,61
-57,1580,Scholarship Application,2025-04-06,Scholarship Application conducted for student 1580,54,76,60,80
-58,1608,Bicycle Provided,2025-12-12,Bicycle Provided conducted for student 1608,97,29,98,30
-59,860,Extra Coaching,2025-11-24,Extra Coaching conducted for student 860,45,38,50,42
-60,411,Scholarship Application,2025-10-14,Scholarship Application conducted for student 411,75,37,90,49
-61,567,Home Visit,2025-08-07,Home Visit conducted for student 567,43,41,48,45
-62,593,Bicycle Provided,2025-08-23,Bicycle Provided conducted for student 593,51,42,56,46
-63,1159,Peer Buddy Assignment,2025-12-04,Peer Buddy Assignment conducted for student 1159,49,16,55,21
-64,623,Extra Coaching,2025-09-10,Extra Coaching conducted for student 623,40,43,53,53
-65,1012,Uniform Provided,2025-05-24,Uniform Provided conducted for student 1012,51,69,69,83
-66,231,Counselling Session,2025-07-03,Counselling Session conducted for student 231,59,23,67,30
-67,1543,Extra Coaching,2025-01-06,Extra Coaching conducted for student 1543,67,29,84,43
-68,806,Counselling Session,2025-09-22,Counselling Session conducted for student 806,63,42,64,43
-69,1035,Counselling Session,2025-11-27,Counselling Session conducted for student 1035,73,34,91,49
-70,1349,Counselling Session,2025-04-26,Counselling Session conducted for student 1349,42,49,57,61
-71,976,Parent-Teacher Meeting,2025-11-16,Parent-Teacher Meeting conducted for student 976,57,36,64,42
-72,577,Home Visit,2025-12-19,Home Visit conducted for student 577,24,10,29,14
-73,59,Scholarship Application,2025-12-16,Scholarship Application conducted for student 59,58,43,74,55
-74,1520,Parent-Teacher Meeting,2025-01-24,Parent-Teacher Meeting conducted for student 1520,57,27,76,42
-75,194,Peer Buddy Assignment,2025-09-13,Peer Buddy Assignment conducted for student 194,90,45,95,49
-76,1427,Scholarship Application,2025-04-25,Scholarship Application conducted for student 1427,62,50,80,64
-77,1349,Peer Buddy Assignment,2025-07-28,Peer Buddy Assignment conducted for student 1349,42,49,54,59
-78,683,Home Visit,2025-10-24,Home Visit conducted for student 683,57,49,69,59
-79,1010,Bicycle Provided,2025-12-27,Bicycle Provided conducted for student 1010,79,15,82,17
-80,1232,Scholarship Application,2025-07-13,Scholarship Application conducted for student 1232,74,54,83,61
-81,79,Counselling Session,2025-10-24,Counselling Session conducted for student 79,55,66,62,72
-82,1732,Bicycle Provided,2025-07-14,Bicycle Provided conducted for student 1732,50,50,69,65
-83,1966,Home Visit,2025-03-11,Home Visit conducted for student 1966,54,34,68,45
-84,1660,Scholarship Application,2025-05-06,Scholarship Application conducted for student 1660,73,84,89,96
-85,1912,Home Visit,2025-03-26,Home Visit conducted for student 1912,98,30,100,43
-86,1822,Peer Buddy Assignment,2025-03-22,Peer Buddy Assignment conducted for student 1822,52,62,65,73
-87,1990,Scholarship Application,2025-05-20,Scholarship Application conducted for student 1990,51,22,62,31
-88,914,Home Visit,2025-02-07,Home Visit conducted for student 914,59,72,73,83
-89,969,Bicycle Provided,2025-09-08,Bicycle Provided conducted for student 969,56,59,73,73
-90,1993,Uniform Provided,2025-06-20,Uniform Provided conducted for student 1993,57,47,71,58
-91,1471,Counselling Session,2025-08-28,Counselling Session conducted for student 1471,44,51,53,58
-92,997,Counselling Session,2025-06-05,Counselling Session conducted for student 997,51,73,63,83
-93,1304,Parent-Teacher Meeting,2025-07-04,Parent-Teacher Meeting conducted for student 1304,57,87,62,91
-94,308,Home Visit,2025-10-06,Home Visit conducted for student 308,44,66,48,69
-95,914,Extra Coaching,2025-02-15,Extra Coaching conducted for student 914,59,72,65,76
-96,1568,Bicycle Provided,2025-06-14,Bicycle Provided conducted for student 1568,55,69,72,83
-97,1454,Peer Buddy Assignment,2025-07-27,Peer Buddy Assignment conducted for student 1454,53,68,54,68
-98,1391,Bicycle Provided,2025-04-16,Bicycle Provided conducted for student 1391,43,74,58,86
-99,245,Bicycle Provided,2025-04-03,Bicycle Provided conducted for student 245,49,61,60,70
-100,1978,Extra Coaching,2025-12-21,Extra Coaching conducted for student 1978,50,53,57,59
-101,667,Extra Coaching,2025-06-19,Extra Coaching conducted for student 667,81,29,96,41
-102,755,Peer Buddy Assignment,2025-08-22,Peer Buddy Assignment conducted for student 755,83,48,91,55
-103,10,Parent-Teacher Meeting,2025-02-10,Parent-Teacher Meeting conducted for student 10,58,49,70,58
-104,1359,Home Visit,2025-04-28,Home Visit conducted for student 1359,62,45,81,60
-105,814,Extra Coaching,2025-01-06,Extra Coaching conducted for student 814,53,56,67,67
-106,1562,Extra Coaching,2025-06-03,Extra Coaching conducted for student 1562,59,64,73,75
-107,1822,Scholarship Application,2025-05-25,Scholarship Application conducted for student 1822,52,62,57,66
-108,1522,Parent-Teacher Meeting,2025-09-13,Parent-Teacher Meeting conducted for student 1522,57,40,66,47
-109,987,Peer Buddy Assignment,2025-09-18,Peer Buddy Assignment conducted for student 987,80,14,84,17
-110,562,Home Visit,2025-05-16,Home Visit conducted for student 562,41,55,56,67
-111,1903,Scholarship Application,2025-02-09,Scholarship Application conducted for student 1903,32,38,50,52
-112,948,Parent-Teacher Meeting,2025-07-24,Parent-Teacher Meeting conducted for student 948,82,42,96,53
-113,1678,Counselling Session,2025-06-22,Counselling Session conducted for student 1678,45,85,54,92
-114,615,Scholarship Application,2025-03-12,Scholarship Application conducted for student 615,48,87,49,88
-115,1718,Parent-Teacher Meeting,2025-12-26,Parent-Teacher Meeting conducted for student 1718,71,86,82,95
-116,993,Uniform Provided,2025-10-27,Uniform Provided conducted for student 993,62,37,68,42
-117,1914,Counselling Session,2025-03-28,Counselling Session conducted for student 1914,69,39,82,50
-118,1875,Parent-Teacher Meeting,2025-01-19,Parent-Teacher Meeting conducted for student 1875,40,52,46,57
-119,1743,Scholarship Application,2025-08-16,Scholarship Application conducted for student 1743,61,44,74,54
-120,923,Bicycle Provided,2025-02-17,Bicycle Provided conducted for student 923,74,24,77,27
-121,642,Extra Coaching,2025-09-02,Extra Coaching conducted for student 642,52,39,53,39
-122,420,Uniform Provided,2025-04-03,Uniform Provided conducted for student 420,60,64,66,68
-123,873,Counselling Session,2025-06-03,Counselling Session conducted for student 873,72,42,90,57
-124,1819,Parent-Teacher Meeting,2025-04-14,Parent-Teacher Meeting conducted for student 1819,73,46,82,53
-125,1750,Bicycle Provided,2025-03-21,Bicycle Provided conducted for student 1750,52,51,54,52
-126,806,Home Visit,2025-08-26,Home Visit conducted for student 806,63,42,73,50
-127,1115,Uniform Provided,2025-02-02,Uniform Provided conducted for student 1115,62,43,74,52
-128,1007,Bicycle Provided,2025-11-17,Bicycle Provided conducted for student 1007,50,80,56,85
-129,476,Parent-Teacher Meeting,2025-03-11,Parent-Teacher Meeting conducted for student 476,88,49,100,61
-130,1606,Home Visit,2025-07-21,Home Visit conducted for student 1606,60,32,70,40
-131,628,Home Visit,2025-03-28,Home Visit conducted for student 628,69,70,77,76
-132,356,Scholarship Application,2025-04-26,Scholarship Application conducted for student 356,43,41,57,52
-133,969,Extra Coaching,2025-05-06,Extra Coaching conducted for student 969,56,59,70,70
-134,1447,Scholarship Application,2025-01-13,Scholarship Application conducted for student 1447,52,87,52,87
-135,137,Peer Buddy Assignment,2025-04-02,Peer Buddy Assignment conducted for student 137,82,39,85,41
-136,368,Bicycle Provided,2025-06-21,Bicycle Provided conducted for student 368,73,36,86,47
-137,386,Extra Coaching,2025-12-01,Extra Coaching conducted for student 386,48,10,61,20
-138,1822,Peer Buddy Assignment,2025-03-10,Peer Buddy Assignment conducted for student 1822,52,62,66,73
-139,365,Counselling Session,2025-05-26,Counselling Session conducted for student 365,61,54,64,56
-140,204,Bicycle Provided,2025-07-16,Bicycle Provided conducted for student 204,70,45,70,45
-141,781,Extra Coaching,2025-02-09,Extra Coaching conducted for student 781,59,54,65,59
-142,523,Peer Buddy Assignment,2025-01-04,Peer Buddy Assignment conducted for student 523,67,28,86,43
-143,3,Bicycle Provided,2025-07-08,Bicycle Provided conducted for student 3,66,52,70,55
-144,806,Peer Buddy Assignment,2025-03-05,Peer Buddy Assignment conducted for student 806,63,42,80,55
-145,54,Parent-Teacher Meeting,2025-01-02,Parent-Teacher Meeting conducted for student 54,44,82,63,97
-146,478,Scholarship Application,2025-10-05,Scholarship Application conducted for student 478,56,52,59,54
-147,875,Peer Buddy Assignment,2025-01-12,Peer Buddy Assignment conducted for student 875,46,51,53,57
-148,1315,Home Visit,2025-02-22,Home Visit conducted for student 1315,66,33,80,44
-149,1369,Home Visit,2025-02-04,Home Visit conducted for student 1369,59,47,74,59
-150,1215,Parent-Teacher Meeting,2025-09-10,Parent-Teacher Meeting conducted for student 1215,72,26,76,29
-151,665,Counselling Session,2025-04-08,Counselling Session conducted for student 665,71,41,83,51
-152,1860,Extra Coaching,2025-03-17,Extra Coaching conducted for student 1860,52,42,59,48
-153,1836,Counselling Session,2025-04-06,Counselling Session conducted for student 1836,57,75,61,78
-154,1058,Parent-Teacher Meeting,2025-06-27,Parent-Teacher Meeting conducted for student 1058,74,35,91,48
-155,702,Parent-Teacher Meeting,2025-06-05,Parent-Teacher Meeting conducted for student 702,48,63,52,66
-156,860,Peer Buddy Assignment,2025-09-13,Peer Buddy Assignment conducted for student 860,45,38,50,42
-157,1139,Parent-Teacher Meeting,2025-10-15,Parent-Teacher Meeting conducted for student 1139,73,28,81,34
-158,1836,Home Visit,2025-03-09,Home Visit conducted for student 1836,57,75,68,84
-159,1975,Bicycle Provided,2025-07-07,Bicycle Provided conducted for student 1975,69,35,74,39
-160,51,Home Visit,2025-12-26,Home Visit conducted for student 51,50,74,61,83
-161,740,Extra Coaching,2025-04-14,Extra Coaching conducted for student 740,59,43,74,55
-162,1130,Uniform Provided,2025-11-28,Uniform Provided conducted for student 1130,45,49,61,62
-163,1456,Parent-Teacher Meeting,2025-11-19,Parent-Teacher Meeting conducted for student 1456,56,37,67,45
-164,135,Extra Coaching,2025-03-20,Extra Coaching conducted for student 135,92,24,100,31
-165,1240,Scholarship Application,2025-06-13,Scholarship Application conducted for student 1240,60,27,76,40
-166,769,Counselling Session,2025-06-23,Counselling Session conducted for student 769,59,45,62,47
-167,1647,Bicycle Provided,2025-07-12,Bicycle Provided conducted for student 1647,73,27,89,40
-168,1755,Counselling Session,2025-05-16,Counselling Session conducted for student 1755,58,82,73,94
-169,754,Bicycle Provided,2025-03-12,Bicycle Provided conducted for student 754,63,35,78,47
-170,1023,Home Visit,2025-10-14,Home Visit conducted for student 1023,55,98,63,100
-171,128,Counselling Session,2025-05-16,Counselling Session conducted for student 128,38,67,53,79
-172,1431,Extra Coaching,2025-04-08,Extra Coaching conducted for student 1431,72,65,80,71
-173,1732,Extra Coaching,2025-03-10,Extra Coaching conducted for student 1732,50,50,67,64
-174,337,Parent-Teacher Meeting,2025-07-14,Parent-Teacher Meeting conducted for student 337,74,56,88,67
-175,1258,Scholarship Application,2025-06-07,Scholarship Application conducted for student 1258,59,39,70,47
-176,1762,Bicycle Provided,2025-03-25,Bicycle Provided conducted for student 1762,36,40,48,50
-177,1125,Extra Coaching,2025-12-08,Extra Coaching conducted for student 1125,58,20,61,22
-178,1894,Scholarship Application,2025-12-25,Scholarship Application conducted for student 1894,49,82,68,97
-179,61,Uniform Provided,2025-10-05,Uniform Provided conducted for student 61,50,42,55,46
-180,1982,Extra Coaching,2025-08-03,Extra Coaching conducted for student 1982,48,67,51,69
-181,1039,Uniform Provided,2025-11-23,Uniform Provided conducted for student 1039,57,55,75,69
-182,282,Scholarship Application,2025-12-21,Scholarship Application conducted for student 282,62,36,72,44
-183,1456,Scholarship Application,2025-06-09,Scholarship Application conducted for student 1456,56,37,60,40
-184,1898,Parent-Teacher Meeting,2025-07-18,Parent-Teacher Meeting conducted for student 1898,82,50,88,55
-185,1704,Bicycle Provided,2025-04-22,Bicycle Provided conducted for student 1704,71,40,82,49
-186,521,Bicycle Provided,2025-02-13,Bicycle Provided conducted for student 521,34,64,48,75
-187,1921,Peer Buddy Assignment,2025-05-19,Peer Buddy Assignment conducted for student 1921,36,80,45,87
-188,611,Scholarship Application,2025-10-20,Scholarship Application conducted for student 611,41,39,56,51
-189,718,Counselling Session,2025-07-04,Counselling Session conducted for student 718,49,45,56,50
-190,612,Scholarship Application,2025-11-17,Scholarship Application conducted for student 612,56,47,57,48
-191,69,Bicycle Provided,2025-09-21,Bicycle Provided conducted for student 69,50,57,53,60
-192,299,Uniform Provided,2025-02-01,Uniform Provided conducted for student 299,58,100,62,100
-193,355,Uniform Provided,2025-04-16,Uniform Provided conducted for student 355,63,83,65,85
-194,140,Home Visit,2025-08-23,Home Visit conducted for student 140,58,58,61,60
-195,802,Home Visit,2025-02-09,Home Visit conducted for student 802,77,10,87,18
-196,1705,Bicycle Provided,2025-08-18,Bicycle Provided conducted for student 1705,63,59,81,73
-197,336,Home Visit,2025-09-05,Home Visit conducted for student 336,58,74,65,80
-198,1707,Parent-Teacher Meeting,2025-10-07,Parent-Teacher Meeting conducted for student 1707,58,34,60,35
-199,1528,Counselling Session,2025-05-13,Counselling Session conducted for student 1528,62,38,77,50
-200,331,Parent-Teacher Meeting,2025-08-13,Parent-Teacher Meeting conducted for student 331,66,54,69,56
-201,1498,Parent-Teacher Meeting,2025-03-24,Parent-Teacher Meeting conducted for student 1498,59,79,70,88
-202,1876,Peer Buddy Assignment,2025-07-27,Peer Buddy Assignment conducted for student 1876,52,19,66,30
-203,1936,Extra Coaching,2025-07-07,Extra Coaching conducted for student 1936,90,38,100,52
-204,826,Scholarship Application,2025-10-04,Scholarship Application conducted for student 826,50,40,59,47
-205,552,Parent-Teacher Meeting,2025-01-07,Parent-Teacher Meeting conducted for student 552,57,57,64,63
-206,825,Parent-Teacher Meeting,2025-09-28,Parent-Teacher Meeting conducted for student 825,53,50,66,60
-207,750,Counselling Session,2025-03-21,Counselling Session conducted for student 750,60,13,68,19
-208,593,Bicycle Provided,2025-12-10,Bicycle Provided conducted for student 593,51,42,62,51
-209,1546,Counselling Session,2025-10-14,Counselling Session conducted for student 1546,41,29,50,36
-210,128,Home Visit,2025-07-22,Home Visit conducted for student 128,38,67,55,81
-211,10,Scholarship Application,2025-04-11,Scholarship Application conducted for student 10,58,49,62,52
-212,1072,Counselling Session,2025-01-04,Counselling Session conducted for student 1072,80,26,99,41
-213,1120,Counselling Session,2025-03-12,Counselling Session conducted for student 1120,42,65,57,77
-214,628,Home Visit,2025-02-13,Home Visit conducted for student 628,69,70,84,82
-215,55,Scholarship Application,2025-10-20,Scholarship Application conducted for student 55,84,27,89,31
-216,1822,Home Visit,2025-02-07,Home Visit conducted for student 1822,52,62,56,65
-217,323,Parent-Teacher Meeting,2025-05-07,Parent-Teacher Meeting conducted for student 323,68,32,77,39
-218,1520,Bicycle Provided,2025-08-22,Bicycle Provided conducted for student 1520,57,27,73,39
-219,1130,Parent-Teacher Meeting,2025-09-26,Parent-Teacher Meeting conducted for student 1130,45,49,47,50
-220,499,Home Visit,2025-10-18,Home Visit conducted for student 499,62,40,77,52
-221,1926,Parent-Teacher Meeting,2025-02-24,Parent-Teacher Meeting conducted for student 1926,52,56,53,56
-222,863,Counselling Session,2025-07-16,Counselling Session conducted for student 863,68,25,80,34
-223,1546,Home Visit,2025-02-09,Home Visit conducted for student 1546,41,29,59,43
-224,1608,Counselling Session,2025-02-13,Counselling Session conducted for student 1608,97,29,97,29
-225,1975,Parent-Teacher Meeting,2025-10-21,Parent-Teacher Meeting conducted for student 1975,69,35,83,46
-226,437,Counselling Session,2025-01-02,Counselling Session conducted for student 437,60,46,76,59
-227,1193,Peer Buddy Assignment,2025-01-05,Peer Buddy Assignment conducted for student 1193,56,95,66,100
-228,1715,Bicycle Provided,2025-07-04,Bicycle Provided conducted for student 1715,58,65,66,71
-229,1295,Home Visit,2025-12-03,Home Visit conducted for student 1295,68,51,85,65
-230,1738,Home Visit,2025-04-10,Home Visit conducted for student 1738,72,36,74,38
-231,1678,Scholarship Application,2025-05-17,Scholarship Application conducted for student 1678,45,85,62,99
-232,1527,Extra Coaching,2025-05-18,Extra Coaching conducted for student 1527,79,37,84,41
-233,187,Peer Buddy Assignment,2025-01-07,Peer Buddy Assignment conducted for student 187,54,86,60,91
-234,452,Counselling Session,2025-07-02,Counselling Session conducted for student 452,67,68,80,79
-235,590,Counselling Session,2025-08-27,Counselling Session conducted for student 590,51,59,69,74
-236,450,Counselling Session,2025-04-18,Counselling Session conducted for student 450,64,36,71,42
-237,1913,Counselling Session,2025-06-26,Counselling Session conducted for student 1913,63,42,72,49
-238,1408,Counselling Session,2025-08-04,Counselling Session conducted for student 1408,81,24,85,27
-239,1568,Peer Buddy Assignment,2025-12-04,Peer Buddy Assignment conducted for student 1568,55,69,66,78
-240,208,Parent-Teacher Meeting,2025-01-05,Parent-Teacher Meeting conducted for student 208,90,34,96,38
-241,128,Uniform Provided,2025-11-28,Uniform Provided conducted for student 128,38,67,38,67
-242,1295,Counselling Session,2025-05-03,Counselling Session conducted for student 1295,68,51,70,52
-243,1621,Uniform Provided,2025-11-10,Uniform Provided conducted for student 1621,27,40,33,45
-244,1975,Uniform Provided,2025-12-03,Uniform Provided conducted for student 1975,69,35,84,47
-245,513,Scholarship Application,2025-07-16,Scholarship Application conducted for student 513,46,53,62,66
-246,127,Extra Coaching,2025-08-13,Extra Coaching conducted for student 127,41,83,46,87
-247,206,Bicycle Provided,2025-04-20,Bicycle Provided conducted for student 206,74,57,75,58
-248,329,Counselling Session,2025-01-21,Counselling Session conducted for student 329,68,82,77,89
-249,461,Counselling Session,2025-11-13,Counselling Session conducted for student 461,84,39,86,40
-250,76,Parent-Teacher Meeting,2025-03-08,Parent-Teacher Meeting conducted for student 76,56,72,68,82
-251,282,Counselling Session,2025-06-10,Counselling Session conducted for student 282,62,36,79,50
-252,718,Counselling Session,2025-12-08,Counselling Session conducted for student 718,49,45,50,46
-253,1435,Extra Coaching,2025-04-11,Extra Coaching conducted for student 1435,55,48,56,48
-254,270,Bicycle Provided,2025-11-06,Bicycle Provided conducted for student 270,45,11,52,17
-255,329,Bicycle Provided,2025-09-09,Bicycle Provided conducted for student 329,68,82,84,95
-256,748,Extra Coaching,2025-03-11,Extra Coaching conducted for student 748,61,44,64,46
-257,313,Uniform Provided,2025-12-10,Uniform Provided conducted for student 313,66,42,83,56
-258,1579,Home Visit,2025-03-21,Home Visit conducted for student 1579,70,76,77,81
-259,1103,Uniform Provided,2025-12-26,Uniform Provided conducted for student 1103,65,66,66,67
-260,1005,Uniform Provided,2025-10-18,Uniform Provided conducted for student 1005,67,43,78,52
-261,560,Parent-Teacher Meeting,2025-09-17,Parent-Teacher Meeting conducted for student 560,50,63,68,77
-262,1190,Extra Coaching,2025-07-13,Extra Coaching conducted for student 1190,75,42,87,51
-263,1319,Scholarship Application,2025-01-01,Scholarship Application conducted for student 1319,59,31,66,36
-264,1390,Extra Coaching,2025-07-15,Extra Coaching conducted for student 1390,85,24,91,29
-265,1825,Bicycle Provided,2025-04-12,Bicycle Provided conducted for student 1825,41,36,48,41
-266,1572,Parent-Teacher Meeting,2025-03-28,Parent-Teacher Meeting conducted for student 1572,56,36,75,51
-267,341,Uniform Provided,2025-11-24,Uniform Provided conducted for student 341,68,61,69,62
-268,1572,Peer Buddy Assignment,2025-07-13,Peer Buddy Assignment conducted for student 1572,56,36,58,38
-269,874,Extra Coaching,2025-07-12,Extra Coaching conducted for student 874,98,46,98,46
-270,1479,Bicycle Provided,2025-01-16,Bicycle Provided conducted for student 1479,82,54,82,54
-271,1730,Home Visit,2025-02-10,Home Visit conducted for student 1730,38,17,55,30
-272,1313,Parent-Teacher Meeting,2025-02-27,Parent-Teacher Meeting conducted for student 1313,53,73,57,76
-273,1517,Bicycle Provided,2025-09-21,Bicycle Provided conducted for student 1517,80,65,99,80
-274,969,Bicycle Provided,2025-03-09,Bicycle Provided conducted for student 969,56,59,56,59
-275,1731,Uniform Provided,2025-02-01,Uniform Provided conducted for student 1731,52,67,52,67
-276,389,Bicycle Provided,2025-07-18,Bicycle Provided conducted for student 389,67,45,78,54
-277,793,Parent-Teacher Meeting,2025-02-16,Parent-Teacher Meeting conducted for student 793,56,90,58,92
-278,1464,Peer Buddy Assignment,2025-01-16,Peer Buddy Assignment conducted for student 1464,91,40,99,46
-279,79,Scholarship Application,2025-09-24,Scholarship Application conducted for student 79,55,66,57,67
-280,704,Extra Coaching,2025-11-06,Extra Coaching conducted for student 704,69,37,71,39
-281,1152,Peer Buddy Assignment,2025-09-05,Peer Buddy Assignment conducted for student 1152,47,63,50,65
-282,61,Peer Buddy Assignment,2025-05-01,Peer Buddy Assignment conducted for student 61,50,42,60,50
-283,207,Uniform Provided,2025-06-28,Uniform Provided conducted for student 207,63,26,66,28
-284,282,Scholarship Application,2025-06-20,Scholarship Application conducted for student 282,62,36,73,45
-285,1866,Parent-Teacher Meeting,2025-01-01,Parent-Teacher Meeting conducted for student 1866,74,43,79,47
-286,976,Home Visit,2025-12-25,Home Visit conducted for student 976,57,36,68,44
-287,1314,Uniform Provided,2025-10-26,Uniform Provided conducted for student 1314,73,79,75,80
-288,850,Extra Coaching,2025-02-23,Extra Coaching conducted for student 850,45,60,47,61
-289,849,Scholarship Application,2025-06-22,Scholarship Application conducted for student 849,40,73,40,73
-290,811,Extra Coaching,2025-04-11,Extra Coaching conducted for student 811,57,61,76,76
-291,1245,Uniform Provided,2025-03-06,Uniform Provided conducted for student 1245,75,48,90,60
-292,604,Peer Buddy Assignment,2025-01-26,Peer Buddy Assignment conducted for student 604,78,25,96,39
-293,213,Parent-Teacher Meeting,2025-02-21,Parent-Teacher Meeting conducted for student 213,80,10,94,21
-294,1133,Extra Coaching,2025-08-18,Extra Coaching conducted for student 1133,62,36,81,51
-295,1820,Uniform Provided,2025-09-08,Uniform Provided conducted for student 1820,70,34,70,34
-296,84,Home Visit,2025-02-01,Home Visit conducted for student 84,57,85,74,99
-297,1369,Counselling Session,2025-10-10,Counselling Session conducted for student 1369,59,47,77,61
-298,1427,Extra Coaching,2025-04-10,Extra Coaching conducted for student 1427,62,50,63,51
-299,931,Extra Coaching,2025-03-26,Extra Coaching conducted for student 931,60,65,75,77
-300,288,Counselling Session,2025-11-09,Counselling Session conducted for student 288,72,52,77,56
-301,1025,Bicycle Provided,2025-08-10,Bicycle Provided conducted for student 1025,51,52,65,63
-302,1286,Peer Buddy Assignment,2025-09-02,Peer Buddy Assignment conducted for student 1286,71,39,74,41
-303,67,Scholarship Application,2025-01-13,Scholarship Application conducted for student 67,68,41,72,44
-304,1986,Extra Coaching,2025-08-18,Extra Coaching conducted for student 1986,61,42,73,52
-305,1089,Home Visit,2025-11-08,Home Visit conducted for student 1089,59,46,68,53
-306,781,Counselling Session,2025-11-05,Counselling Session conducted for student 781,59,54,60,55
-307,365,Uniform Provided,2025-05-08,Uniform Provided conducted for student 365,61,54,77,67
-308,567,Bicycle Provided,2025-10-19,Bicycle Provided conducted for student 567,43,41,43,41
-309,1439,Extra Coaching,2025-09-11,Extra Coaching conducted for student 1439,64,52,83,67
-310,811,Uniform Provided,2025-06-19,Uniform Provided conducted for student 811,57,61,68,70
-311,1246,Home Visit,2025-09-25,Home Visit conducted for student 1246,64,32,69,36
-312,257,Home Visit,2025-07-20,Home Visit conducted for student 257,69,53,88,68
-313,905,Home Visit,2025-12-10,Home Visit conducted for student 905,59,75,66,80
-314,45,Peer Buddy Assignment,2025-09-20,Peer Buddy Assignment conducted for student 45,100,23,100,35
-315,1644,Bicycle Provided,2025-01-13,Bicycle Provided conducted for student 1644,71,83,72,84
-316,313,Home Visit,2025-07-11,Home Visit conducted for student 313,66,42,74,48
-317,1270,Scholarship Application,2025-04-15,Scholarship Application conducted for student 1270,69,49,84,61
-318,880,Extra Coaching,2025-08-02,Extra Coaching conducted for student 880,48,41,49,42
-319,1156,Extra Coaching,2025-03-15,Extra Coaching conducted for student 1156,48,65,56,71
-320,1722,Scholarship Application,2025-07-22,Scholarship Application conducted for student 1722,80,27,91,35
+1,1794,Uniform Provided,2025-02-21,Uniform Provided conducted for student 1794,44,50,46,51
+2,87,Parent-Teacher Meeting,2025-09-14,Parent-Teacher Meeting conducted for student 87,54,23,54,23
+3,1966,Extra Coaching,2025-01-01,Extra Coaching conducted for student 1966,50,31,64,42
+4,1894,Peer Buddy Assignment,2025-05-09,Peer Buddy Assignment conducted for student 1894,44,78,55,87
+5,375,Peer Buddy Assignment,2025-09-15,Peer Buddy Assignment conducted for student 375,51,53,62,61
+6,885,Uniform Provided,2025-06-21,Uniform Provided conducted for student 885,83,33,92,40
+7,1279,Home Visit,2025-11-08,Home Visit conducted for student 1279,33,52,45,62
+8,1106,Peer Buddy Assignment,2025-10-07,Peer Buddy Assignment conducted for student 1106,53,73,53,73
+9,1828,Counselling Session,2025-12-05,Counselling Session conducted for student 1828,61,54,67,59
+10,1500,Home Visit,2025-02-21,Home Visit conducted for student 1500,61,48,71,56
+11,1580,Home Visit,2025-08-09,Home Visit conducted for student 1580,54,76,57,78
+12,329,Home Visit,2025-07-22,Home Visit conducted for student 329,68,82,80,92
+13,962,Extra Coaching,2025-03-06,Extra Coaching conducted for student 962,45,44,48,46
+14,1156,Scholarship Application,2025-07-20,Scholarship Application conducted for student 1156,48,65,52,68
+15,738,Counselling Session,2025-11-18,Counselling Session conducted for student 738,56,100,56,100
+16,484,Peer Buddy Assignment,2025-01-01,Peer Buddy Assignment conducted for student 484,72,66,87,78
+17,1615,Uniform Provided,2025-11-07,Uniform Provided conducted for student 1615,77,65,77,65
+18,1140,Peer Buddy Assignment,2025-05-26,Peer Buddy Assignment conducted for student 1140,70,45,73,47
+19,1683,Bicycle Provided,2025-11-23,Bicycle Provided conducted for student 1683,55,67,63,73
+20,1140,Parent-Teacher Meeting,2025-12-26,Parent-Teacher Meeting conducted for student 1140,70,45,81,54
+21,1408,Extra Coaching,2025-04-16,Extra Coaching conducted for student 1408,81,24,99,39
+22,1835,Parent-Teacher Meeting,2025-01-23,Parent-Teacher Meeting conducted for student 1835,51,57,67,69
+23,711,Uniform Provided,2025-12-03,Uniform Provided conducted for student 711,60,28,76,40
+24,1327,Parent-Teacher Meeting,2025-05-13,Parent-Teacher Meeting conducted for student 1327,39,61,57,76
+25,1679,Extra Coaching,2025-07-22,Extra Coaching conducted for student 1679,68,50,83,62
+26,92,Uniform Provided,2025-05-02,Uniform Provided conducted for student 92,55,54,69,65
+27,366,Uniform Provided,2025-04-12,Uniform Provided conducted for student 366,69,33,81,43
+28,1537,Parent-Teacher Meeting,2025-06-08,Parent-Teacher Meeting conducted for student 1537,69,37,74,41
+29,1883,Counselling Session,2025-05-13,Counselling Session conducted for student 1883,66,39,79,49
+30,329,Bicycle Provided,2025-06-28,Bicycle Provided conducted for student 329,68,82,78,90
+31,816,Parent-Teacher Meeting,2025-09-07,Parent-Teacher Meeting conducted for student 816,65,47,80,59
+32,1089,Scholarship Application,2025-11-12,Scholarship Application conducted for student 1089,54,42,67,52
+33,892,Bicycle Provided,2025-11-06,Bicycle Provided conducted for student 892,72,36,89,49
+34,1788,Uniform Provided,2025-04-14,Uniform Provided conducted for student 1788,67,39,86,54
+35,750,Parent-Teacher Meeting,2025-09-11,Parent-Teacher Meeting conducted for student 750,64,17,68,20
+36,1496,Home Visit,2025-11-26,Home Visit conducted for student 1496,92,15,100,22
+37,97,Extra Coaching,2025-09-16,Extra Coaching conducted for student 97,66,39,66,39
+38,685,Parent-Teacher Meeting,2025-04-06,Parent-Teacher Meeting conducted for student 685,58,55,73,67
+39,1686,Bicycle Provided,2025-10-18,Bicycle Provided conducted for student 1686,68,72,72,75
+40,1140,Parent-Teacher Meeting,2025-05-08,Parent-Teacher Meeting conducted for student 1140,70,45,87,58
+41,1685,Bicycle Provided,2025-10-23,Bicycle Provided conducted for student 1685,72,73,78,78
+42,1643,Home Visit,2025-06-01,Home Visit conducted for student 1643,67,60,82,72
+43,666,Parent-Teacher Meeting,2025-06-26,Parent-Teacher Meeting conducted for student 666,70,52,71,52
+44,1072,Home Visit,2025-10-06,Home Visit conducted for student 1072,81,27,91,35
+45,1518,Bicycle Provided,2025-08-06,Bicycle Provided conducted for student 1518,56,39,70,50
+46,231,Home Visit,2025-01-15,Home Visit conducted for student 231,58,22,61,25
+47,1771,Peer Buddy Assignment,2025-10-25,Peer Buddy Assignment conducted for student 1771,92,40,95,43
+48,400,Home Visit,2025-12-15,Home Visit conducted for student 400,79,52,87,59
+49,229,Uniform Provided,2025-03-28,Uniform Provided conducted for student 229,59,78,78,93
+50,764,Extra Coaching,2025-05-21,Extra Coaching conducted for student 764,41,50,56,62
+51,54,Extra Coaching,2025-11-21,Extra Coaching conducted for student 54,43,81,62,96
+52,116,Home Visit,2025-04-18,Home Visit conducted for student 116,34,61,52,75
+53,128,Counselling Session,2025-07-05,Counselling Session conducted for student 128,38,67,44,72
+54,1471,Extra Coaching,2025-02-12,Extra Coaching conducted for student 1471,55,60,55,60
+55,1647,Peer Buddy Assignment,2025-12-23,Peer Buddy Assignment conducted for student 1647,74,28,86,38
+56,1661,Parent-Teacher Meeting,2025-06-01,Parent-Teacher Meeting conducted for student 1661,79,40,92,50
+57,1682,Counselling Session,2025-05-07,Counselling Session conducted for student 1682,33,94,39,99
+58,899,Counselling Session,2025-03-15,Counselling Session conducted for student 899,73,39,84,48
+59,413,Scholarship Application,2025-04-25,Scholarship Application conducted for student 413,76,51,85,58
+60,615,Extra Coaching,2025-04-03,Extra Coaching conducted for student 615,49,88,64,100
+61,626,Counselling Session,2025-02-05,Counselling Session conducted for student 626,73,17,77,20
+62,1187,Extra Coaching,2025-10-01,Extra Coaching conducted for student 1187,53,42,58,46
+63,672,Peer Buddy Assignment,2025-07-12,Peer Buddy Assignment conducted for student 672,60,54,63,56
+64,1050,Uniform Provided,2025-05-05,Uniform Provided conducted for student 1050,68,47,79,55
+65,250,Bicycle Provided,2025-03-26,Bicycle Provided conducted for student 250,43,52,56,62
+66,1623,Counselling Session,2025-12-02,Counselling Session conducted for student 1623,58,26,68,34
+67,861,Uniform Provided,2025-04-17,Uniform Provided conducted for student 861,67,37,70,40
+68,1068,Extra Coaching,2025-06-10,Extra Coaching conducted for student 1068,60,47,66,52
+69,1405,Counselling Session,2025-05-21,Counselling Session conducted for student 1405,98,27,100,39
+70,1005,Home Visit,2025-10-27,Home Visit conducted for student 1005,67,43,85,57
+71,620,Counselling Session,2025-10-08,Counselling Session conducted for student 620,77,67,83,72
+72,67,Counselling Session,2025-08-22,Counselling Session conducted for student 67,62,36,80,50
+73,1596,Parent-Teacher Meeting,2025-06-27,Parent-Teacher Meeting conducted for student 1596,67,35,74,40
+74,190,Scholarship Application,2025-12-15,Scholarship Application conducted for student 190,57,34,70,45
+75,1473,Bicycle Provided,2025-03-16,Bicycle Provided conducted for student 1473,55,68,58,70
+76,1405,Counselling Session,2025-07-15,Counselling Session conducted for student 1405,98,27,100,30
+77,716,Uniform Provided,2025-05-13,Uniform Provided conducted for student 716,67,38,68,39
+78,1049,Peer Buddy Assignment,2025-02-22,Peer Buddy Assignment conducted for student 1049,67,42,73,47
+79,1279,Uniform Provided,2025-06-14,Uniform Provided conducted for student 1279,33,52,47,63
+80,87,Peer Buddy Assignment,2025-07-09,Peer Buddy Assignment conducted for student 87,54,23,71,37
+81,1790,Peer Buddy Assignment,2025-07-01,Peer Buddy Assignment conducted for student 1790,60,49,70,57
+82,1732,Counselling Session,2025-09-26,Counselling Session conducted for student 1732,51,51,64,61
+83,1953,Bicycle Provided,2025-03-01,Bicycle Provided conducted for student 1953,50,44,61,53
+84,1860,Home Visit,2025-07-19,Home Visit conducted for student 1860,53,43,57,46
+85,953,Bicycle Provided,2025-04-01,Bicycle Provided conducted for student 953,43,65,58,77
+86,1001,Scholarship Application,2025-10-20,Scholarship Application conducted for student 1001,62,49,68,54
+87,1544,Counselling Session,2025-07-24,Counselling Session conducted for student 1544,73,40,82,47
+88,1029,Home Visit,2025-05-11,Home Visit conducted for student 1029,54,62,54,62
+89,1337,Extra Coaching,2025-12-20,Extra Coaching conducted for student 1337,58,57,74,70
+90,320,Peer Buddy Assignment,2025-03-22,Peer Buddy Assignment conducted for student 320,52,68,66,79
+91,953,Bicycle Provided,2025-08-08,Bicycle Provided conducted for student 953,43,65,56,75
+92,1650,Counselling Session,2025-03-25,Counselling Session conducted for student 1650,47,57,51,60
+93,1516,Scholarship Application,2025-09-18,Scholarship Application conducted for student 1516,47,18,57,26
+94,1446,Home Visit,2025-05-17,Home Visit conducted for student 1446,47,52,53,57
+95,259,Counselling Session,2025-11-10,Counselling Session conducted for student 259,63,93,76,100
+96,699,Home Visit,2025-03-12,Home Visit conducted for student 699,63,53,75,62
+97,798,Scholarship Application,2025-07-10,Scholarship Application conducted for student 798,36,66,43,71
+98,11,Peer Buddy Assignment,2025-09-06,Peer Buddy Assignment conducted for student 11,72,50,87,62
+99,1410,Scholarship Application,2025-02-08,Scholarship Application conducted for student 1410,58,56,63,60
+100,868,Uniform Provided,2025-06-25,Uniform Provided conducted for student 868,64,31,71,36
+101,1643,Bicycle Provided,2025-08-06,Bicycle Provided conducted for student 1643,67,60,79,69
+102,1860,Counselling Session,2025-02-23,Counselling Session conducted for student 1860,53,43,59,48
+103,1601,Home Visit,2025-12-10,Home Visit conducted for student 1601,62,43,74,53
+104,1017,Scholarship Application,2025-02-17,Scholarship Application conducted for student 1017,53,59,70,72
+105,611,Scholarship Application,2025-11-10,Scholarship Application conducted for student 611,47,44,51,47
+106,1940,Extra Coaching,2025-04-26,Extra Coaching conducted for student 1940,51,55,52,56
+107,979,Home Visit,2025-11-21,Home Visit conducted for student 979,55,35,72,48
+108,1748,Uniform Provided,2025-08-04,Uniform Provided conducted for student 1748,58,60,71,70
+109,661,Counselling Session,2025-06-01,Counselling Session conducted for student 661,68,36,76,42
+110,1782,Counselling Session,2025-11-15,Counselling Session conducted for student 1782,51,66,63,75
+111,1025,Bicycle Provided,2025-06-26,Bicycle Provided conducted for student 1025,42,45,43,46
+112,1962,Uniform Provided,2025-04-28,Uniform Provided conducted for student 1962,47,59,50,61
+113,1896,Counselling Session,2025-07-05,Counselling Session conducted for student 1896,63,57,76,67
+114,1792,Counselling Session,2025-12-02,Counselling Session conducted for student 1792,84,36,98,47
+115,958,Uniform Provided,2025-04-27,Uniform Provided conducted for student 958,59,66,71,75
+116,685,Peer Buddy Assignment,2025-02-19,Peer Buddy Assignment conducted for student 685,58,55,68,63
+117,426,Bicycle Provided,2025-10-03,Bicycle Provided conducted for student 426,77,36,92,48
+118,912,Uniform Provided,2025-04-22,Uniform Provided conducted for student 912,63,38,72,45
+119,1852,Uniform Provided,2025-02-25,Uniform Provided conducted for student 1852,50,33,50,33
+120,1803,Peer Buddy Assignment,2025-10-17,Peer Buddy Assignment conducted for student 1803,68,29,81,39
+121,861,Uniform Provided,2025-01-15,Uniform Provided conducted for student 861,67,37,79,47
+122,1118,Extra Coaching,2025-10-24,Extra Coaching conducted for student 1118,57,45,69,54
+123,1048,Counselling Session,2025-06-28,Counselling Session conducted for student 1048,99,31,100,34
+124,488,Parent-Teacher Meeting,2025-05-11,Parent-Teacher Meeting conducted for student 488,52,46,53,46
+125,1681,Peer Buddy Assignment,2025-01-05,Peer Buddy Assignment conducted for student 1681,66,73,81,85
+126,676,Bicycle Provided,2025-12-26,Bicycle Provided conducted for student 676,52,51,62,59
+127,367,Uniform Provided,2025-09-20,Uniform Provided conducted for student 367,72,56,72,56
+128,1001,Scholarship Application,2025-12-10,Scholarship Application conducted for student 1001,62,49,74,59
+129,1500,Home Visit,2025-03-20,Home Visit conducted for student 1500,61,48,67,53
+130,141,Bicycle Provided,2025-08-25,Bicycle Provided conducted for student 141,55,71,62,77
+131,378,Scholarship Application,2025-11-25,Scholarship Application conducted for student 378,73,43,73,43
+132,397,Home Visit,2025-10-25,Home Visit conducted for student 397,52,31,66,42
+133,1860,Scholarship Application,2025-05-14,Scholarship Application conducted for student 1860,53,43,66,53
+134,374,Uniform Provided,2025-11-12,Uniform Provided conducted for student 374,44,76,49,80
+135,211,Counselling Session,2025-09-23,Counselling Session conducted for student 211,53,60,67,71
+136,820,Scholarship Application,2025-07-18,Scholarship Application conducted for student 820,52,67,62,75
+137,572,Home Visit,2025-02-08,Home Visit conducted for student 572,55,40,71,53
+138,7,Peer Buddy Assignment,2025-08-06,Peer Buddy Assignment conducted for student 7,59,91,60,92
+139,861,Extra Coaching,2025-02-08,Extra Coaching conducted for student 861,67,37,71,40
+140,61,Bicycle Provided,2025-01-04,Bicycle Provided conducted for student 61,56,47,66,55
+141,499,Peer Buddy Assignment,2025-03-01,Peer Buddy Assignment conducted for student 499,68,45,69,46
+142,920,Peer Buddy Assignment,2025-06-26,Peer Buddy Assignment conducted for student 920,70,52,74,55
+143,1356,Home Visit,2025-09-24,Home Visit conducted for student 1356,75,68,78,71
+144,1421,Counselling Session,2025-11-13,Counselling Session conducted for student 1421,60,51,70,59
+145,1243,Bicycle Provided,2025-04-14,Bicycle Provided conducted for student 1243,76,54,92,67
+146,698,Scholarship Application,2025-09-19,Scholarship Application conducted for student 698,61,85,74,95
+147,1887,Counselling Session,2025-11-23,Counselling Session conducted for student 1887,75,38,84,45
+148,1876,Scholarship Application,2025-12-13,Scholarship Application conducted for student 1876,56,23,68,32
+149,1081,Uniform Provided,2025-12-17,Uniform Provided conducted for student 1081,45,45,56,54
+150,743,Parent-Teacher Meeting,2025-11-16,Parent-Teacher Meeting conducted for student 743,52,38,60,44
+151,899,Peer Buddy Assignment,2025-01-02,Peer Buddy Assignment conducted for student 899,73,39,73,39
+152,1156,Peer Buddy Assignment,2025-02-09,Peer Buddy Assignment conducted for student 1156,48,65,61,76
+153,1876,Counselling Session,2025-01-16,Counselling Session conducted for student 1876,56,23,74,37
+154,60,Uniform Provided,2025-02-14,Uniform Provided conducted for student 60,56,72,60,75
+155,773,Extra Coaching,2025-01-26,Extra Coaching conducted for student 773,62,43,75,53
+156,1140,Extra Coaching,2025-02-06,Extra Coaching conducted for student 1140,70,45,74,48
+157,1520,Home Visit,2025-09-12,Home Visit conducted for student 1520,58,28,59,29
+158,135,Counselling Session,2025-10-25,Counselling Session conducted for student 135,86,19,87,20
+159,1292,Parent-Teacher Meeting,2025-11-10,Parent-Teacher Meeting conducted for student 1292,57,39,64,44
+160,814,Extra Coaching,2025-07-20,Extra Coaching conducted for student 814,58,60,67,67
+161,1717,Bicycle Provided,2025-06-11,Bicycle Provided conducted for student 1717,71,46,78,52
+162,1805,Counselling Session,2025-10-06,Counselling Session conducted for student 1805,66,82,75,89
+163,792,Uniform Provided,2025-02-08,Uniform Provided conducted for student 792,58,55,66,62
+164,1054,Counselling Session,2025-12-25,Counselling Session conducted for student 1054,55,76,68,86
+165,126,Bicycle Provided,2025-03-28,Bicycle Provided conducted for student 126,61,39,69,45
+166,1485,Extra Coaching,2025-07-04,Extra Coaching conducted for student 1485,62,57,64,59
+167,1790,Bicycle Provided,2025-07-25,Bicycle Provided conducted for student 1790,60,49,68,56
+168,347,Scholarship Application,2025-01-12,Scholarship Application conducted for student 347,65,51,72,56
+169,1308,Scholarship Application,2025-08-04,Scholarship Application conducted for student 1308,75,35,78,38
+170,1825,Uniform Provided,2025-12-10,Uniform Provided conducted for student 1825,36,32,52,45
+171,1138,Home Visit,2025-03-24,Home Visit conducted for student 1138,45,79,47,81
+172,1923,Parent-Teacher Meeting,2025-11-13,Parent-Teacher Meeting conducted for student 1923,64,64,83,79
+173,72,Parent-Teacher Meeting,2025-05-26,Parent-Teacher Meeting conducted for student 72,52,56,59,62
+174,1074,Bicycle Provided,2025-03-16,Bicycle Provided conducted for student 1074,41,78,49,84
+175,298,Scholarship Application,2025-01-10,Scholarship Application conducted for student 298,82,32,100,47
+176,1520,Counselling Session,2025-02-26,Counselling Session conducted for student 1520,58,28,67,35
+177,1933,Counselling Session,2025-11-10,Counselling Session conducted for student 1933,62,58,65,60
+178,1763,Counselling Session,2025-06-06,Counselling Session conducted for student 1763,64,58,69,62
+179,569,Scholarship Application,2025-02-20,Scholarship Application conducted for student 569,67,25,74,31
+180,1977,Bicycle Provided,2025-04-14,Bicycle Provided conducted for student 1977,63,48,68,52
+181,657,Home Visit,2025-05-13,Home Visit conducted for student 657,55,57,61,62
+182,757,Bicycle Provided,2025-10-17,Bicycle Provided conducted for student 757,60,47,78,61
+183,659,Home Visit,2025-04-13,Home Visit conducted for student 659,89,12,100,20
+184,81,Scholarship Application,2025-01-01,Scholarship Application conducted for student 81,50,51,55,55
+185,315,Scholarship Application,2025-08-22,Scholarship Application conducted for student 315,79,34,91,43
+186,366,Scholarship Application,2025-07-24,Scholarship Application conducted for student 366,69,33,73,36
+187,148,Counselling Session,2025-06-19,Counselling Session conducted for student 148,70,57,89,72
+188,855,Peer Buddy Assignment,2025-12-20,Peer Buddy Assignment conducted for student 855,65,46,67,47
+189,1764,Peer Buddy Assignment,2025-08-02,Peer Buddy Assignment conducted for student 1764,63,48,70,54
+190,346,Scholarship Application,2025-05-03,Scholarship Application conducted for student 346,79,43,79,43
+191,1768,Parent-Teacher Meeting,2025-01-13,Parent-Teacher Meeting conducted for student 1768,62,43,76,54
+192,1608,Peer Buddy Assignment,2025-10-04,Peer Buddy Assignment conducted for student 1608,93,25,94,26
+193,340,Uniform Provided,2025-03-05,Uniform Provided conducted for student 340,96,38,100,46
+194,1564,Parent-Teacher Meeting,2025-08-04,Parent-Teacher Meeting conducted for student 1564,70,46,80,54
+195,1897,Home Visit,2025-02-18,Home Visit conducted for student 1897,77,49,79,50
+196,1990,Bicycle Provided,2025-11-02,Bicycle Provided conducted for student 1990,42,15,58,28
+197,883,Uniform Provided,2025-06-22,Uniform Provided conducted for student 883,58,56,66,63
+198,597,Parent-Teacher Meeting,2025-10-16,Parent-Teacher Meeting conducted for student 597,66,75,83,89
+199,882,Uniform Provided,2025-10-20,Uniform Provided conducted for student 882,76,51,77,51
+200,791,Peer Buddy Assignment,2025-03-04,Peer Buddy Assignment conducted for student 791,74,41,83,48
+201,626,Counselling Session,2025-05-18,Counselling Session conducted for student 626,73,17,90,30
+202,1624,Extra Coaching,2025-07-12,Extra Coaching conducted for student 1624,66,39,76,47
+203,126,Counselling Session,2025-09-20,Counselling Session conducted for student 126,61,39,71,47
+204,11,Counselling Session,2025-01-14,Counselling Session conducted for student 11,72,50,73,51
+205,1088,Scholarship Application,2025-11-26,Scholarship Application conducted for student 1088,59,56,72,66
+206,1130,Extra Coaching,2025-07-28,Extra Coaching conducted for student 1130,45,49,49,52
+207,676,Bicycle Provided,2025-04-27,Bicycle Provided conducted for student 676,52,51,53,52
+208,65,Uniform Provided,2025-06-27,Uniform Provided conducted for student 65,69,67,76,72
+209,1860,Peer Buddy Assignment,2025-12-28,Peer Buddy Assignment conducted for student 1860,53,43,68,55
+210,329,Counselling Session,2025-07-20,Counselling Session conducted for student 329,68,82,74,86
+211,1596,Bicycle Provided,2025-04-16,Bicycle Provided conducted for student 1596,67,35,85,49
+212,1140,Counselling Session,2025-02-19,Counselling Session conducted for student 1140,70,45,86,58
+213,514,Scholarship Application,2025-09-28,Scholarship Application conducted for student 514,56,35,69,46
+214,1982,Home Visit,2025-07-17,Home Visit conducted for student 1982,44,64,63,79
+215,903,Peer Buddy Assignment,2025-12-02,Peer Buddy Assignment conducted for student 903,50,76,52,77
+216,1624,Scholarship Application,2025-11-27,Scholarship Application conducted for student 1624,66,39,66,39
+217,1682,Counselling Session,2025-07-16,Counselling Session conducted for student 1682,33,94,39,99
+218,454,Peer Buddy Assignment,2025-02-13,Peer Buddy Assignment conducted for student 454,86,25,90,28
+219,1230,Scholarship Application,2025-07-04,Scholarship Application conducted for student 1230,58,53,74,65
+220,1776,Scholarship Application,2025-02-16,Scholarship Application conducted for student 1776,63,52,75,61
+221,1329,Extra Coaching,2025-05-19,Extra Coaching conducted for student 1329,52,90,52,90
+222,1791,Home Visit,2025-05-23,Home Visit conducted for student 1791,70,34,82,43
+223,1748,Home Visit,2025-04-16,Home Visit conducted for student 1748,58,60,71,70
+224,1606,Extra Coaching,2025-12-10,Extra Coaching conducted for student 1606,65,36,72,41
+225,187,Extra Coaching,2025-09-08,Extra Coaching conducted for student 187,53,86,59,91
+226,466,Bicycle Provided,2025-04-22,Bicycle Provided conducted for student 466,73,33,84,42
+227,623,Counselling Session,2025-03-16,Counselling Session conducted for student 623,45,47,62,60
+228,465,Scholarship Application,2025-10-21,Scholarship Application conducted for student 465,69,67,72,69
+229,1954,Extra Coaching,2025-06-04,Extra Coaching conducted for student 1954,64,74,72,81
+230,1458,Parent-Teacher Meeting,2025-02-27,Parent-Teacher Meeting conducted for student 1458,53,77,65,86
+231,1650,Peer Buddy Assignment,2025-06-18,Peer Buddy Assignment conducted for student 1650,47,57,64,71
+232,229,Counselling Session,2025-11-24,Counselling Session conducted for student 229,59,78,75,91
+233,126,Parent-Teacher Meeting,2025-08-28,Parent-Teacher Meeting conducted for student 126,61,39,69,45
+234,1329,Peer Buddy Assignment,2025-02-27,Peer Buddy Assignment conducted for student 1329,52,90,66,100
+235,1686,Peer Buddy Assignment,2025-12-07,Peer Buddy Assignment conducted for student 1686,68,72,76,78
+236,539,Home Visit,2025-02-23,Home Visit conducted for student 539,52,52,62,60
+237,125,Scholarship Application,2025-10-20,Scholarship Application conducted for student 125,55,64,60,68
+238,213,Parent-Teacher Meeting,2025-02-27,Parent-Teacher Meeting conducted for student 213,79,10,83,13
+239,335,Parent-Teacher Meeting,2025-06-08,Parent-Teacher Meeting conducted for student 335,60,47,61,48
+240,473,Bicycle Provided,2025-04-25,Bicycle Provided conducted for student 473,42,24,43,24
+241,82,Scholarship Application,2025-01-25,Scholarship Application conducted for student 82,72,33,88,45
+242,298,Bicycle Provided,2025-09-22,Bicycle Provided conducted for student 298,82,32,96,43
+243,757,Home Visit,2025-11-19,Home Visit conducted for student 757,60,47,68,53
+244,1488,Parent-Teacher Meeting,2025-06-26,Parent-Teacher Meeting conducted for student 1488,67,39,78,48
+245,282,Uniform Provided,2025-03-21,Uniform Provided conducted for student 282,56,31,61,35
+246,335,Home Visit,2025-09-24,Home Visit conducted for student 335,60,47,72,56
+247,778,Peer Buddy Assignment,2025-12-04,Peer Buddy Assignment conducted for student 778,77,18,86,25
+248,325,Scholarship Application,2025-06-21,Scholarship Application conducted for student 325,65,27,83,42
+249,1660,Counselling Session,2025-07-13,Counselling Session conducted for student 1660,78,88,88,96
+250,1112,Counselling Session,2025-04-07,Counselling Session conducted for student 1112,46,58,65,73
+251,1039,Uniform Provided,2025-04-14,Uniform Provided conducted for student 1039,58,56,67,63
+252,609,Uniform Provided,2025-12-05,Uniform Provided conducted for student 609,72,55,74,56
+253,1229,Scholarship Application,2025-12-10,Scholarship Application conducted for student 1229,55,52,74,67
+254,1361,Peer Buddy Assignment,2025-05-05,Peer Buddy Assignment conducted for student 1361,58,44,71,54
+255,1443,Peer Buddy Assignment,2025-12-28,Peer Buddy Assignment conducted for student 1443,98,46,100,61
+256,1863,Counselling Session,2025-12-20,Counselling Session conducted for student 1863,96,39,100,47
+257,1656,Scholarship Application,2025-01-14,Scholarship Application conducted for student 1656,68,97,81,100
+258,354,Scholarship Application,2025-03-24,Scholarship Application conducted for student 354,50,92,54,95
+259,1656,Extra Coaching,2025-05-01,Extra Coaching conducted for student 1656,68,97,69,98
+260,917,Counselling Session,2025-11-26,Counselling Session conducted for student 917,70,38,76,42
+261,1546,Parent-Teacher Meeting,2025-03-10,Parent-Teacher Meeting conducted for student 1546,51,37,66,49
+262,1788,Parent-Teacher Meeting,2025-03-22,Parent-Teacher Meeting conducted for student 1788,67,39,86,54
+263,1344,Home Visit,2025-03-23,Home Visit conducted for student 1344,69,71,74,75
+264,1593,Extra Coaching,2025-01-23,Extra Coaching conducted for student 1593,57,85,69,94
+265,1001,Uniform Provided,2025-07-12,Uniform Provided conducted for student 1001,62,49,76,60
+266,1789,Counselling Session,2025-02-22,Counselling Session conducted for student 1789,84,86,98,97
+267,400,Bicycle Provided,2025-11-03,Bicycle Provided conducted for student 400,79,52,98,67
+268,835,Bicycle Provided,2025-05-01,Bicycle Provided conducted for student 835,45,54,57,63
+269,1535,Parent-Teacher Meeting,2025-02-10,Parent-Teacher Meeting conducted for student 1535,79,20,88,27
+270,87,Scholarship Application,2025-10-18,Scholarship Application conducted for student 87,54,23,66,32
+271,748,Counselling Session,2025-04-15,Counselling Session conducted for student 748,62,45,62,45
+272,1177,Parent-Teacher Meeting,2025-11-05,Parent-Teacher Meeting conducted for student 1177,31,82,37,86
+273,72,Extra Coaching,2025-02-22,Extra Coaching conducted for student 72,52,56,64,66
+274,214,Home Visit,2025-09-27,Home Visit conducted for student 214,55,36,58,38
+275,298,Counselling Session,2025-11-27,Counselling Session conducted for student 298,82,32,97,44
+276,1892,Home Visit,2025-11-07,Home Visit conducted for student 1892,57,71,63,76
+277,1005,Extra Coaching,2025-10-09,Extra Coaching conducted for student 1005,67,43,70,45
+278,1349,Peer Buddy Assignment,2025-01-21,Peer Buddy Assignment conducted for student 1349,37,45,56,60
+279,892,Scholarship Application,2025-08-13,Scholarship Application conducted for student 892,72,36,86,47
+280,890,Bicycle Provided,2025-10-22,Bicycle Provided conducted for student 890,51,37,69,51
+281,863,Bicycle Provided,2025-10-06,Bicycle Provided conducted for student 863,68,25,83,37
+282,1295,Extra Coaching,2025-04-08,Extra Coaching conducted for student 1295,72,54,82,62
+283,647,Counselling Session,2025-10-09,Counselling Session conducted for student 647,62,21,63,22
+284,232,Counselling Session,2025-11-27,Counselling Session conducted for student 232,78,40,88,48
+285,1147,Scholarship Application,2025-10-22,Scholarship Application conducted for student 1147,61,54,61,54
+286,1853,Scholarship Application,2025-05-05,Scholarship Application conducted for student 1853,35,80,40,84
+287,97,Peer Buddy Assignment,2025-05-01,Peer Buddy Assignment conducted for student 97,66,39,73,45
+288,1421,Peer Buddy Assignment,2025-09-24,Peer Buddy Assignment conducted for student 1421,60,51,63,54
+289,1473,Bicycle Provided,2025-04-07,Bicycle Provided conducted for student 1473,55,68,71,80
+290,962,Scholarship Application,2025-04-09,Scholarship Application conducted for student 962,45,44,49,47
+291,307,Extra Coaching,2025-02-24,Extra Coaching conducted for student 307,69,24,79,32
+292,1056,Bicycle Provided,2025-10-09,Bicycle Provided conducted for student 1056,79,30,93,41
+293,1325,Bicycle Provided,2025-06-26,Bicycle Provided conducted for student 1325,32,60,37,64
+294,74,Parent-Teacher Meeting,2025-04-24,Parent-Teacher Meeting conducted for student 74,56,57,67,65
+295,1104,Bicycle Provided,2025-10-05,Bicycle Provided conducted for student 1104,40,62,51,70
+296,820,Extra Coaching,2025-01-15,Extra Coaching conducted for student 820,52,67,57,71
+297,374,Extra Coaching,2025-01-19,Extra Coaching conducted for student 374,44,76,61,89
+298,615,Peer Buddy Assignment,2025-09-21,Peer Buddy Assignment conducted for student 615,49,88,67,100
+299,1496,Extra Coaching,2025-10-09,Extra Coaching conducted for student 1496,92,15,100,29
+300,863,Uniform Provided,2025-11-28,Uniform Provided conducted for student 863,68,25,68,25
+301,1299,Bicycle Provided,2025-10-28,Bicycle Provided conducted for student 1299,69,40,88,55
+302,271,Parent-Teacher Meeting,2025-06-07,Parent-Teacher Meeting conducted for student 271,54,27,60,32
+303,936,Counselling Session,2025-08-13,Counselling Session conducted for student 936,43,61,49,66
+304,56,Parent-Teacher Meeting,2025-08-04,Parent-Teacher Meeting conducted for student 56,64,52,80,64
+305,1710,Scholarship Application,2025-01-02,Scholarship Application conducted for student 1710,91,54,100,66
+306,325,Extra Coaching,2025-05-05,Extra Coaching conducted for student 325,65,27,76,35
+307,1316,Uniform Provided,2025-04-09,Uniform Provided conducted for student 1316,85,46,100,61
+308,921,Bicycle Provided,2025-11-13,Bicycle Provided conducted for student 921,65,74,75,82
+309,1180,Bicycle Provided,2025-07-15,Bicycle Provided conducted for student 1180,83,28,94,37
+310,1783,Parent-Teacher Meeting,2025-08-01,Parent-Teacher Meeting conducted for student 1783,54,42,62,48
+311,1804,Counselling Session,2025-08-23,Counselling Session conducted for student 1804,57,29,74,42
+312,1421,Home Visit,2025-07-19,Home Visit conducted for student 1421,60,51,61,51
+313,730,Parent-Teacher Meeting,2025-10-15,Parent-Teacher Meeting conducted for student 730,46,57,64,71
+314,1953,Counselling Session,2025-01-25,Counselling Session conducted for student 1953,50,44,54,47
+315,1662,Parent-Teacher Meeting,2025-12-15,Parent-Teacher Meeting conducted for student 1662,78,30,80,31
+316,1089,Bicycle Provided,2025-08-27,Bicycle Provided conducted for student 1089,54,42,61,47
+317,1471,Bicycle Provided,2025-12-11,Bicycle Provided conducted for student 1471,55,60,55,60
+318,626,Extra Coaching,2025-02-18,Extra Coaching conducted for student 626,73,17,87,28
+319,1130,Bicycle Provided,2025-01-22,Bicycle Provided conducted for student 1130,45,49,46,50
+320,60,Uniform Provided,2025-11-10,Uniform Provided conducted for student 60,56,72,61,76

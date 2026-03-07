@@ -1,6 +1,7 @@
 """
 Dataset Generator for AI Early Warning System
 Generates realistic student records with dropout risk labels.
+Covers multiple zones and districts across Tamil Nadu.
 """
 
 import pandas as pd
@@ -18,7 +19,11 @@ MALE_NAMES = [
     "Ravi", "Arun", "Kumar", "Suresh", "Ajay", "Vijay", "Rahul", "Deepak",
     "Karthik", "Manoj", "Arjun", "Siddharth", "Ganesh", "Harish", "Naveen",
     "Prasad", "Rajesh", "Sathish", "Venkat", "Ashwin", "Dinesh", "Gopal",
-    "Hari", "Jagan", "Mohan", "Ramesh", "Surya", "Vikram", "Anand", "Bala"
+    "Hari", "Jagan", "Mohan", "Ramesh", "Surya", "Vikram", "Anand", "Bala",
+    "Selvam", "Murugan", "Senthil", "Vignesh", "Pradeep", "Saravanan",
+    "Thirumurugan", "Dhanush", "Karthi", "Shankar", "Mani", "Balaji",
+    "Santhosh", "Prabhu", "Tamil", "Kumaran", "Velan", "Gokul", "Nishanth",
+    "Bharath", "Kishore", "Aravind", "Vasanth", "Logesh", "Nandha",
 ]
 
 FEMALE_NAMES = [
@@ -26,38 +31,65 @@ FEMALE_NAMES = [
     "Nisha", "Kavya", "Swathi", "Deepika", "Gayathri", "Janani", "Keerthi",
     "Lavanya", "Nandhini", "Pavithra", "Revathi", "Sangeetha", "Thulasi",
     "Uma", "Vanitha", "Yamuna", "Bhavani", "Chitra", "Durga", "Eswari",
-    "Gowri", "Indira", "Kamala"
+    "Gowri", "Indira", "Kamala", "Saranya", "Dhivya", "Ranjani", "Swetha",
+    "Maha", "Kowsalya", "Hema", "Mythili", "Abinaya", "Shalini",
+    "Archana", "Ramya", "Sowmya", "Bhuvana", "Kalpana", "Vaishali",
+    "Jeyanthi", "Tamilselvi", "Vasuki", "Devi",
 ]
 
-SCHOOLS = [
-    "Government Higher Secondary School - Thiruvanmiyur",
-    "Government Higher Secondary School - Adyar",
-    "Government Higher Secondary School - Tambaram",
-    "Government Higher Secondary School - Velachery",
-    "Government Higher Secondary School - Chromepet",
-    "Government Higher Secondary School - Madhavaram",
-    "Government Higher Secondary School - Ambattur",
-    "Government Higher Secondary School - Avadi",
-    "Government Higher Secondary School - Porur",
-    "Government Higher Secondary School - Sholinganallur",
-    "Government Higher Secondary School - Perungudi",
-    "Government Higher Secondary School - Guindy",
-]
-
-SCHOOL_TO_DISTRICT = {
-    "Government Higher Secondary School - Thiruvanmiyur": "Chennai",
-    "Government Higher Secondary School - Adyar": "Chennai",
-    "Government Higher Secondary School - Tambaram": "Chengalpattu",
-    "Government Higher Secondary School - Velachery": "Chennai",
-    "Government Higher Secondary School - Chromepet": "Chengalpattu",
-    "Government Higher Secondary School - Madhavaram": "Chennai",
-    "Government Higher Secondary School - Ambattur": "Chennai",
-    "Government Higher Secondary School - Avadi": "Tiruvallur",
-    "Government Higher Secondary School - Porur": "Chennai",
-    "Government Higher Secondary School - Sholinganallur": "Chennai",
-    "Government Higher Secondary School - Perungudi": "Chennai",
-    "Government Higher Secondary School - Guindy": "Chennai",
+# -------------------------------------------------------------------
+# Zone / District / School hierarchy
+# -------------------------------------------------------------------
+ZONE_DISTRICT_MAP = {
+    "North Zone": ["Chennai", "Tiruvallur", "Kancheepuram", "Chengalpattu"],
+    "South Zone": ["Madurai", "Tirunelveli", "Thoothukudi", "Virudhunagar"],
+    "Central Zone": ["Trichy", "Thanjavur", "Pudukkottai", "Nagapattinam"],
+    "West Zone": ["Coimbatore", "Salem", "Erode", "Tirupur", "Namakkal"],
+    "East Zone": ["Cuddalore", "Villupuram", "Perambalur", "Ariyalur"],
 }
+
+DISTRICT_SCHOOLS = {
+    # North Zone
+    "Chennai": [
+        "GHSS Thiruvanmiyur", "GHSS Adyar", "GHSS Velachery",
+        "GHSS Madhavaram", "GHSS Ambattur", "GHSS Guindy",
+    ],
+    "Tiruvallur": ["GHSS Avadi", "GHSS Ponneri", "GHSS Tiruvallur Town"],
+    "Kancheepuram": ["GHSS Kancheepuram", "GHSS Sriperumbudur"],
+    "Chengalpattu": ["GHSS Tambaram", "GHSS Chromepet", "GHSS Chengalpattu Town"],
+    # South Zone
+    "Madurai": ["GHSS Madurai East", "GHSS Madurai West", "GHSS Thirumangalam"],
+    "Tirunelveli": ["GHSS Tirunelveli Town", "GHSS Palayamkottai"],
+    "Thoothukudi": ["GHSS Thoothukudi", "GHSS Kovilpatti"],
+    "Virudhunagar": ["GHSS Virudhunagar", "GHSS Sivakasi"],
+    # Central Zone
+    "Trichy": ["GHSS Trichy Fort", "GHSS Srirangam", "GHSS Thillai Nagar"],
+    "Thanjavur": ["GHSS Thanjavur", "GHSS Kumbakonam"],
+    "Pudukkottai": ["GHSS Pudukkottai"],
+    "Nagapattinam": ["GHSS Nagapattinam", "GHSS Sirkazhi"],
+    # West Zone
+    "Coimbatore": ["GHSS RS Puram", "GHSS Gandhipuram", "GHSS Singanallur"],
+    "Salem": ["GHSS Salem Town", "GHSS Attur"],
+    "Erode": ["GHSS Erode", "GHSS Gobichettipalayam"],
+    "Tirupur": ["GHSS Tirupur"],
+    "Namakkal": ["GHSS Namakkal", "GHSS Rasipuram"],
+    # East Zone
+    "Cuddalore": ["GHSS Cuddalore", "GHSS Chidambaram"],
+    "Villupuram": ["GHSS Villupuram", "GHSS Tindivanam"],
+    "Perambalur": ["GHSS Perambalur"],
+    "Ariyalur": ["GHSS Ariyalur"],
+}
+
+# Flatten lookups
+SCHOOL_TO_DISTRICT = {}
+SCHOOL_TO_ZONE = {}
+for zone, districts in ZONE_DISTRICT_MAP.items():
+    for dist in districts:
+        for school in DISTRICT_SCHOOLS.get(dist, []):
+            SCHOOL_TO_DISTRICT[school] = dist
+            SCHOOL_TO_ZONE[school] = zone
+
+ALL_SCHOOLS = list(SCHOOL_TO_DISTRICT.keys())
 
 DROP_OUT_REASONS = [
     "Economic hardship",
@@ -67,19 +99,24 @@ DROP_OUT_REASONS = [
     "Health issues",
     "Seasonal migration",
     "Early work pressure",
+    "Family relocation",
+    "Lack of interest",
+    "Peer influence",
 ]
 
 SECTIONS = ["A", "B", "C"]
 CLASSES = [6, 7, 8, 9, 10]
+
 
 def _generate_phone():
     return f"+91-{random.randint(60000, 99999)}-{random.randint(10000, 99999)}"
 
 
 def _generate_address(school_name):
-    locality = school_name.split(" - ")[-1]
+    locality = school_name.replace("GHSS ", "")
     street_no = random.randint(1, 240)
-    return f"{street_no}, {locality} Main Road"
+    streets = ["Main Road", "Cross Street", "Nagar", "Colony", "Avenue"]
+    return f"{street_no}, {locality} {random.choice(streets)}"
 
 
 def generate_students(n=2000):
@@ -91,8 +128,9 @@ def generate_students(n=2000):
         name = random.choice(MALE_NAMES if gender == "Male" else FEMALE_NAMES)
         student_class = random.choice(CLASSES)
         section = random.choice(SECTIONS)
-        school = random.choice(SCHOOLS)
-        district = SCHOOL_TO_DISTRICT.get(school, "Chennai")
+        school = random.choice(ALL_SCHOOLS)
+        district = SCHOOL_TO_DISTRICT[school]
+        zone = SCHOOL_TO_ZONE[school]
         state = "Tamil Nadu"
 
         # Base characteristics
@@ -101,7 +139,7 @@ def generate_students(n=2000):
         )[0]
         parent_education = random.choices(
             ["none", "primary", "secondary", "graduate"],
-            weights=[0.25, 0.35, 0.25, 0.15]
+            weights=[0.25, 0.35, 0.25, 0.15],
         )[0]
         distance_km = round(random.uniform(0.5, 12.0), 1)
         sibling_dropout = random.choices(
@@ -109,7 +147,6 @@ def generate_students(n=2000):
         )[0]
 
         # ---- Correlated features ----
-        # Students with bad socio-economic factors tend to have worse school metrics
         risk_bias = 0
         if family_income == "low":
             risk_bias += 12
@@ -136,7 +173,7 @@ def generate_students(n=2000):
         meal_participation = random.choices(
             ["yes", "no"],
             weights=[0.8 - (0.1 if attendance < 60 else 0),
-                     0.2 + (0.1 if attendance < 60 else 0)]
+                     0.2 + (0.1 if attendance < 60 else 0)],
         )[0]
 
         engagement_score = int(np.clip(
@@ -169,8 +206,6 @@ def generate_students(n=2000):
             risk_points += 1
         if meal_participation == "no":
             risk_points += 0.5
-
-        # Higher class students have slightly higher base dropout chance
         if student_class >= 9:
             risk_points += 0.5
 
@@ -184,6 +219,7 @@ def generate_students(n=2000):
             "class": student_class,
             "section": section,
             "school": school,
+            "zone": zone,
             "district": district,
             "state": state,
             "phone": _generate_phone(),
@@ -205,19 +241,22 @@ def generate_students(n=2000):
     return pd.DataFrame(data)
 
 
-def generate_interventions(students_df, n=80):
+def generate_interventions(students_df, n=320):
     """Generate sample intervention records for high-risk students."""
     high_risk = students_df[students_df["dropout_risk"] == 1]
     if len(high_risk) == 0:
         high_risk = students_df.head(20)
 
-    sample_ids = np.random.choice(high_risk["student_id"].values,
-                                   size=min(n, len(high_risk)), replace=True)
+    sample_ids = np.random.choice(
+        high_risk["student_id"].values,
+        size=min(n, len(high_risk)),
+        replace=True,
+    )
 
     intervention_types = [
         "Home Visit", "Counselling Session", "Peer Buddy Assignment",
         "Scholarship Application", "Parent-Teacher Meeting",
-        "Extra Coaching", "Bicycle Provided", "Uniform Provided"
+        "Extra Coaching", "Bicycle Provided", "Uniform Provided",
     ]
 
     records = []
@@ -230,7 +269,6 @@ def generate_interventions(students_df, n=80):
 
         att_before = student["attendance"]
         math_before = student["math_score"]
-        # simulate some improvement
         improvement = random.uniform(0, 20)
         att_after = min(100, int(att_before + improvement))
         math_after = min(100, int(math_before + improvement * 0.8))
@@ -375,6 +413,12 @@ if __name__ == "__main__":
 
     high_risk_count = students["dropout_risk"].sum()
     print(f"  → High-risk students: {high_risk_count} / {len(students)}")
+
+    # Zone summary
+    for zone in sorted(students["zone"].unique()):
+        zone_df = students[students["zone"] == zone]
+        z_risk = zone_df["dropout_risk"].sum()
+        print(f"  → {zone}: {len(zone_df)} students, {z_risk} high-risk")
 
     print("Generating intervention records...")
     interventions = generate_interventions(students, 320)

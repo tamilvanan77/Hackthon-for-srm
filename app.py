@@ -228,6 +228,7 @@ def ensure_student_schema(students_df, csv_path):
     """Ensure required student columns exist; migrate file if needed."""
     required_defaults = {
         "state": "Tamil Nadu",
+        "zone": "North Zone",
         "district": "Chennai",
         "phone": "+91-00000-00000",
         "address": "Address not available",
@@ -338,34 +339,72 @@ with st.sidebar:
 
     st.markdown("---")
 
-    page = st.radio(
-        "Navigation",
-        [
-            "📊 Dashboard",
-            "🎯 Student Risk Analysis",
-            "📋 Intervention Playbook",
-            "💬 Parent Communication",
-            "🏛️ Government Schemes",
-            "🗺️ District Heatmap",
-            "📈 Intervention Tracker",
-            "🤖 AI Chatbot",
-        ],
-        label_visibility="collapsed",
-    )
+    user_role = st.session_state.auth["role"]
+
+    if user_role == "admin":
+        page = st.radio(
+            "Navigation",
+            [
+                "📊 Dashboard",
+                "🎯 Student Risk Analysis",
+                "📋 Intervention Playbook",
+                "💬 Parent Communication",
+                "🏛️ Government Schemes",
+                "🗺️ District Heatmap",
+                "📈 Intervention Tracker",
+                "🤖 AI Chatbot",
+            ],
+            label_visibility="collapsed",
+        )
+    else:
+        page = st.radio(
+            "Navigation",
+            [
+                "📝 Student Data Entry",
+                "🎯 Student Risk Analysis",
+                "📋 Intervention Playbook",
+                "💬 Parent Communication",
+                "🤖 AI Chatbot",
+            ],
+            label_visibility="collapsed",
+        )
 
     st.markdown("---")
 
-    state_options = ["All"] + sorted(all_students_df["state"].dropna().unique().tolist())
-    selected_state = st.selectbox("State", state_options, index=0)
-    filtered_df = all_students_df if selected_state == "All" else all_students_df[all_students_df["state"] == selected_state]
+    # ---- Cascading filters: Zone → District → School ----
+    if user_role == "admin":
+        zone_options = ["All"] + sorted(all_students_df["zone"].dropna().unique().tolist())
+        selected_zone = st.selectbox("Zone", zone_options, index=0)
+        filtered_df = all_students_df if selected_zone == "All" else all_students_df[all_students_df["zone"] == selected_zone]
+    else:
+        # Staff must pick a zone first
+        zone_options = sorted(all_students_df["zone"].dropna().unique().tolist())
+        if "staff_zone" not in st.session_state:
+            st.session_state.staff_zone = zone_options[0]
+        selected_zone = st.selectbox("Your Zone", zone_options, index=zone_options.index(st.session_state.staff_zone) if st.session_state.staff_zone in zone_options else 0)
+        st.session_state.staff_zone = selected_zone
+        filtered_df = all_students_df[all_students_df["zone"] == selected_zone]
 
-    district_options = ["All"] + sorted(filtered_df["district"].dropna().unique().tolist())
-    selected_district = st.selectbox("District", district_options, index=0)
-    filtered_df = filtered_df if selected_district == "All" else filtered_df[filtered_df["district"] == selected_district]
+    district_options_list = sorted(filtered_df["district"].dropna().unique().tolist())
+    if user_role == "admin":
+        district_options = ["All"] + district_options_list
+        selected_district = st.selectbox("District", district_options, index=0)
+        filtered_df = filtered_df if selected_district == "All" else filtered_df[filtered_df["district"] == selected_district]
+    else:
+        if "staff_district" not in st.session_state:
+            st.session_state.staff_district = district_options_list[0] if district_options_list else ""
+        selected_district = st.selectbox("Your District", district_options_list, index=district_options_list.index(st.session_state.staff_district) if st.session_state.staff_district in district_options_list else 0)
+        st.session_state.staff_district = selected_district
+        filtered_df = filtered_df[filtered_df["district"] == selected_district]
 
-    school_options = ["All"] + sorted(filtered_df["school"].dropna().unique().tolist())
-    selected_school = st.selectbox("School", school_options, index=0)
-    students_df = filtered_df if selected_school == "All" else filtered_df[filtered_df["school"] == selected_school]
+    school_options_list = sorted(filtered_df["school"].dropna().unique().tolist())
+    if user_role == "admin":
+        school_options = ["All"] + school_options_list
+        selected_school = st.selectbox("School", school_options, index=0)
+        students_df = filtered_df if selected_school == "All" else filtered_df[filtered_df["school"] == selected_school]
+    else:
+        selected_school = st.selectbox("Your School", school_options_list, index=0) if school_options_list else ""
+        students_df = filtered_df[filtered_df["school"] == selected_school] if selected_school else filtered_df
 
     st.markdown("---")
 
@@ -1247,7 +1286,7 @@ elif page == "📈 Intervention Tracker":
 # ===================================================================
 elif page == "🤖 AI Chatbot":
     st.markdown('<div class="main-title">🤖 AI Support Chatbot</div>', unsafe_allow_html=True)
-    st.markdown('<div class="main-subtitle">Ask for summaries, priority students, attendance concerns, and quick actions</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Ask about zone risk, high-risk schools, priority students, attendance, and action plans</div>', unsafe_allow_html=True)
 
     student_options = [
         f"{row['student_id']} — {row['name']}"
@@ -1261,7 +1300,7 @@ elif page == "🤖 AI Chatbot":
 
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
-            {"role": "assistant", "content": "Ask me: summary, top high risk students, attendance issues, or this student action plan."}
+            {"role": "assistant", "content": "I can help with:\n- **Which zone has highest risk?**\n- **High risk schools**\n- **Summary / overview**\n- **Top high risk students**\n- **Attendance issues**\n- **What should we do for this student?**"}
         ]
 
     for msg in st.session_state.chat_history:
@@ -1274,7 +1313,127 @@ elif page == "🤖 AI Chatbot":
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        response = generate_chatbot_response(prompt, students_df, selected_student=selected_student)
+        # For chatbot, pass all_students_df for zone-level queries
+        response = generate_chatbot_response(prompt, all_students_df, selected_student=selected_student)
         st.session_state.chat_history.append({"role": "assistant", "content": response})
         with st.chat_message("assistant"):
             st.markdown(response)
+
+
+# ===================================================================
+# PAGE 9: STUDENT DATA ENTRY (Staff only)
+# ===================================================================
+elif page == "📝 Student Data Entry":
+    st.markdown('<div class="main-title">📝 Student Data Entry</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Add new students or update existing student details and attendance</div>', unsafe_allow_html=True)
+
+    tab_update, tab_new = st.tabs(["✏️ Update Existing Student", "➕ Add New Student"])
+
+    with tab_update:
+        if students_df.empty:
+            st.warning("No students found for the selected school. Try changing your Zone/District/School.")
+        else:
+            student_options = [
+                f"{row['student_id']} — {row['name']} (Class {row['class']}{row['section']})"
+                for _, row in students_df.iterrows()
+            ]
+            selected = st.selectbox("Select Student to Edit", student_options, key="edit_student_select")
+            selected_id = int(selected.split(" — ")[0])
+            student = students_df[students_df["student_id"] == selected_id].iloc[0]
+
+            with st.form("staff_edit_student"):
+                st.markdown(f"**Editing: {student['name']}** — ID: {student['student_id']}")
+                e1, e2 = st.columns(2)
+                with e1:
+                    edited_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=int(student["attendance"]))
+                    edited_phone = st.text_input("Phone", value=str(student["phone"]))
+                    edited_reason = st.text_input("Dropout Reason", value=str(student["dropout_reason"]))
+                    edited_math = st.number_input("Math Score", min_value=0, max_value=100, value=int(student["math_score"]))
+                with e2:
+                    edited_engagement = st.number_input("Engagement Score", min_value=0, max_value=100, value=int(student["engagement_score"]))
+                    edited_address = st.text_area("Address", value=str(student["address"]), height=70)
+                    edited_distance = st.number_input("Distance (km)", min_value=0.0, max_value=30.0, value=float(student["distance_km"]), step=0.1)
+                    edited_science = st.number_input("Science Score", min_value=0, max_value=100, value=int(student["science_score"]))
+
+                if st.form_submit_button("💾 Save Changes", type="primary", use_container_width=True):
+                    csv_path = os.path.join(base, "data", "students.csv")
+                    source_df = pd.read_csv(csv_path)
+                    source_df = ensure_student_schema(source_df, csv_path)
+                    idx = source_df[source_df["student_id"] == selected_id].index
+                    if len(idx) == 1:
+                        row_idx = idx[0]
+                        source_df.loc[row_idx, "phone"] = edited_phone.strip()
+                        source_df.loc[row_idx, "address"] = edited_address.strip()
+                        source_df.loc[row_idx, "dropout_reason"] = edited_reason.strip() or "None reported"
+                        source_df.loc[row_idx, "attendance"] = int(edited_attendance)
+                        source_df.loc[row_idx, "engagement_score"] = int(edited_engagement)
+                        source_df.loc[row_idx, "distance_km"] = float(edited_distance)
+                        source_df.loc[row_idx, "math_score"] = int(edited_math)
+                        source_df.loc[row_idx, "science_score"] = int(edited_science)
+                        source_df.to_csv(csv_path, index=False)
+                        st.cache_data.clear()
+                        st.cache_resource.clear()
+                        st.success(f"✅ Student {student['name']} updated successfully!")
+                        st.rerun()
+                    else:
+                        st.error("Unable to locate this student in the dataset.")
+
+    with tab_new:
+        with st.form("staff_add_student"):
+            st.markdown("**Add a new student to your school**")
+            n1, n2 = st.columns(2)
+            with n1:
+                new_name = st.text_input("Student Name")
+                new_gender = st.selectbox("Gender", ["Male", "Female"])
+                new_class = st.selectbox("Class", [6, 7, 8, 9, 10])
+                new_section = st.selectbox("Section", ["A", "B", "C"])
+                new_phone = st.text_input("Phone Number")
+                new_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=80)
+                new_math = st.number_input("Math Score", min_value=0, max_value=100, value=50)
+            with n2:
+                new_address = st.text_area("Address", height=70)
+                new_income = st.selectbox("Family Income", ["low", "medium", "high"])
+                new_parent_edu = st.selectbox("Parent Education", ["none", "primary", "secondary", "graduate"])
+                new_distance = st.number_input("Distance (km)", min_value=0.0, max_value=30.0, value=2.0, step=0.1)
+                new_sibling = st.selectbox("Sibling Dropout", ["no", "yes"])
+                new_science = st.number_input("Science Score", min_value=0, max_value=100, value=50)
+                new_language = st.number_input("Language Score", min_value=0, max_value=100, value=50)
+
+            if st.form_submit_button("➕ Add Student", type="primary", use_container_width=True):
+                if not new_name.strip():
+                    st.error("Student name is required.")
+                else:
+                    csv_path = os.path.join(base, "data", "students.csv")
+                    source_df = pd.read_csv(csv_path)
+                    new_id = int(source_df["student_id"].max()) + 1
+                    new_row = {
+                        "student_id": new_id,
+                        "name": new_name.strip(),
+                        "gender": new_gender,
+                        "class": new_class,
+                        "section": new_section,
+                        "school": selected_school if selected_school else "Unknown",
+                        "zone": st.session_state.get("staff_zone", "North Zone"),
+                        "district": st.session_state.get("staff_district", "Chennai"),
+                        "state": "Tamil Nadu",
+                        "phone": new_phone.strip() or "+91-00000-00000",
+                        "address": new_address.strip() or "Address not available",
+                        "attendance": int(new_attendance),
+                        "math_score": int(new_math),
+                        "science_score": int(new_science),
+                        "language_score": int(new_language),
+                        "meal_participation": "yes",
+                        "distance_km": float(new_distance),
+                        "sibling_dropout": new_sibling,
+                        "family_income": new_income,
+                        "parent_education": new_parent_edu,
+                        "engagement_score": 70,
+                        "dropout_reason": "None reported",
+                        "dropout_risk": 0,
+                    }
+                    source_df = pd.concat([source_df, pd.DataFrame([new_row])], ignore_index=True)
+                    source_df.to_csv(csv_path, index=False)
+                    st.cache_data.clear()
+                    st.cache_resource.clear()
+                    st.success(f"✅ Student **{new_name}** added with ID {new_id}!")
+                    st.rerun()
