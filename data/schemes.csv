@@ -1,0 +1,13 @@
+scheme_name,type,eligibility_income,eligibility_distance,benefit,documents_required,active
+PM YASASVI Scholarship,Central,low,0,"₹75,000 per annum scholarship for meritorious students","Aadhaar Card, Income Certificate, School ID, Mark Sheet, Bank Account",yes
+National Means-cum-Merit Scholarship (NMMSS),Central,low,0,"₹12,000 per annum for Class 9–12 students","Aadhaar Card, Income Certificate, School ID, Mark Sheet",yes
+PM SHRI School Enhancement,Central,any,0,Upgraded school infrastructure and learning resources,"School Registration, UDISE Code",yes
+Mid-Day Meal Scheme (PM Poshan),Central,any,0,Free nutritious lunch for all government school students,School Enrolment Proof,yes
+Tamil Nadu Free Bicycle Scheme,State,any,3,Free bicycle for students in Class 9 and above,"Aadhaar Card, School ID, Address Proof, Distance Certificate",yes
+Tamil Nadu Free Uniform Scheme,State,any,0,Free school uniforms (4 sets per year),"School Enrolment Proof, Aadhaar Card",yes
+Tamil Nadu Free Textbook Scheme,State,any,0,Free textbooks and notebooks for all government school students,School Enrolment Proof,yes
+Moovalur Ramamirtham Ammaiyar Higher Education Assurance Scheme,State,low,0,"₹1,000 per month for girl students pursuing higher education","Aadhaar Card, Income Certificate, School ID, Bank Account",yes
+Tamil Nadu Chief Minister's Girl Child Protection Scheme,State,low,0,"₹50,000 deposit maturity on completing Class 12","Aadhaar Card, Birth Certificate, Income Certificate, Bank Account",yes
+Adi Dravidar & Tribal Welfare Scholarship,State,low,0,Full fee waiver + monthly stipend for SC/ST students,"Aadhaar Card, Caste Certificate, Income Certificate, School ID",yes
+Pre-Matric Scholarship for SC Students,Central,low,0,"₹3,500 per annum for Class 9-10 SC students","Aadhaar Card, Caste Certificate, Income Certificate, Bank Account",yes
+National Scheme of Incentive to Girls for Secondary Education,Central,low,0,"₹3,000 fixed deposit maturing at age 18 for SC/ST girl students","Aadhaar Card, Caste Certificate, School Enrolment, Birth Certificate",yes

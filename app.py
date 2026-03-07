@@ -1,0 +1,1280 @@
+"""
+AI Early Warning System for Student Dropout Risk
+Main Streamlit Application - Multi-Page Dashboard
+"""
+
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
+from datetime import datetime
+import os
+import sys
+
+# Add project root to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from backend.risk_model import DropoutRiskModel
+from backend.interventions import (
+    recommend_interventions,
+    get_intervention_effectiveness,
+    INTERVENTION_CATALOG,
+)
+from backend.message_generator import (
+    generate_parent_message,
+    generate_whatsapp_message,
+)
+from backend.scheme_matcher import match_schemes, get_scheme_summary
+from backend.chatbot import generate_chatbot_response
+
+# ===================================================================
+# PAGE CONFIG
+# ===================================================================
+st.set_page_config(
+    page_title="AI Early Warning System — Student Dropout Risk",
+    page_icon="🎓",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# ===================================================================
+# CUSTOM CSS
+# ===================================================================
+st.markdown("""
+<style>
+    /* ---- Global ---- */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* ---- Sidebar ---- */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #0f1724 0%, #162033 100%);
+    }
+    [data-testid="stSidebar"] .stRadio > label {
+        color: #94a3b8 !important;
+        font-size: 0.9rem;
+    }
+
+    /* ---- KPI Cards ---- */
+    .kpi-card {
+        background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79, 139, 249, 0.15);
+    }
+    .kpi-value {
+        font-size: 2.4rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #4F8BF9 0%, #38bdf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 8px 0;
+    }
+    .kpi-label {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .kpi-delta {
+        font-size: 0.8rem;
+        margin-top: 4px;
+    }
+
+    /* ---- Risk Badge ---- */
+    .risk-high {
+        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        color: white;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+    .risk-medium {
+        background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+        color: white;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+    .risk-low {
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        color: white;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    /* ---- Section Headers ---- */
+    .section-header {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin: 20px 0 10px 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #334155;
+    }
+
+    /* ---- Intervention Card ---- */
+    .intervention-card {
+        background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 10px 0;
+        border-left: 4px solid #4F8BF9;
+    }
+    .intervention-card h4 {
+        color: #e2e8f0;
+        margin: 0 0 8px 0;
+    }
+    .intervention-card p {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin: 4px 0;
+    }
+    .evidence-tag {
+        background: #1e3a5f;
+        color: #60a5fa;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        display: inline-block;
+        margin-top: 8px;
+    }
+
+    /* ---- Scheme Card ---- */
+    .scheme-card {
+        background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 10px 0;
+        border-left: 4px solid #10b981;
+    }
+
+    /* ---- Message Box ---- */
+    .message-box {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 20px;
+        white-space: pre-wrap;
+        color: #e2e8f0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* ---- Gauge ---- */
+    .gauge-container {
+        text-align: center;
+        padding: 20px;
+    }
+
+    /* ---- Hide default Streamlit elements ---- */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+
+    /* ---- Title styling ---- */
+    .main-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #4F8BF9 0%, #38bdf8 50%, #818cf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+    }
+    .main-subtitle {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+    }
+
+    div[data-testid="stMetric"] {
+        background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 16px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+# ===================================================================
+# DATA LOADING & MODEL INIT (cached)
+# ===================================================================
+USER_ACCOUNTS = {
+    "admin": {"password": "admin@123", "role": "admin"},
+    "staff": {"password": "staff@123", "role": "staff"},
+    "teacher": {"password": "teacher@123", "role": "staff"},
+}
+
+
+def ensure_student_schema(students_df, csv_path):
+    """Ensure required student columns exist; migrate file if needed."""
+    required_defaults = {
+        "state": "Tamil Nadu",
+        "district": "Chennai",
+        "phone": "+91-00000-00000",
+        "address": "Address not available",
+        "dropout_reason": "None reported",
+    }
+    changed = False
+    for col, default_value in required_defaults.items():
+        if col not in students_df.columns:
+            students_df[col] = default_value
+            changed = True
+        else:
+            students_df[col] = students_df[col].fillna(default_value)
+
+    if changed:
+        students_df.to_csv(csv_path, index=False)
+    return students_df
+
+
+@st.cache_data
+def load_data():
+    base = os.path.dirname(os.path.abspath(__file__))
+    students_csv_path = os.path.join(base, "data", "students.csv")
+    students = pd.read_csv(students_csv_path)
+    students = ensure_student_schema(students, students_csv_path)
+    interventions = pd.read_csv(os.path.join(base, "data", "interventions.csv"))
+    schemes = pd.read_csv(os.path.join(base, "data", "schemes.csv"))
+    return students, interventions, schemes
+
+
+@st.cache_resource
+def train_model(students_csv_path):
+    df = pd.read_csv(students_csv_path)
+    model = DropoutRiskModel()
+    accuracy = model.train(df)
+    return model, accuracy
+
+
+# Try loading
+try:
+    all_students_df, interventions_df, schemes_df = load_data()
+    base = os.path.dirname(os.path.abspath(__file__))
+    model, model_accuracy = train_model(os.path.join(base, "data", "students.csv"))
+    # Compute risk scores for all students
+    all_students_df["risk_score"] = model.predict_batch(all_students_df)
+    all_students_df["risk_level"] = all_students_df["risk_score"].apply(
+        lambda x: "High" if x > 60 else ("Medium" if x > 35 else "Low")
+    )
+    all_students_df = model.identify_high_risk_students(all_students_df)
+except FileNotFoundError:
+    st.error("⚠️ Data files not found. Please run `python generate_data.py` first to generate datasets.")
+    st.stop()
+
+
+# ===================================================================
+# SIDEBAR NAVIGATION
+# ===================================================================
+if "auth" not in st.session_state:
+    st.session_state.auth = {"logged_in": False, "username": None, "role": None}
+
+# Render login in main view so auth is accessible even if sidebar is collapsed.
+if not st.session_state.auth["logged_in"]:
+    st.markdown('<div class="main-title">🔐 Sign In</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="main-subtitle">Use your role account to access the dashboard</div>',
+        unsafe_allow_html=True
+    )
+    login_col = st.columns([1, 1, 1])[1]
+    with login_col:
+        username = st.text_input("Username", key="login_username")
+        password = st.text_input("Password", type="password", key="login_password")
+        if st.button("Sign In", use_container_width=True, key="main_signin"):
+            acct = USER_ACCOUNTS.get(username.strip().lower())
+            if acct and password == acct["password"]:
+                st.session_state.auth = {
+                    "logged_in": True,
+                    "username": username.strip().lower(),
+                    "role": acct["role"],
+                }
+                st.success("Login successful")
+                st.rerun()
+            else:
+                st.error("Invalid username or password")
+        st.caption("Demo users: `admin`, `staff`, `teacher`")
+    st.stop()
+
+with st.sidebar:
+    st.markdown("""
+    <div style="text-align:center; padding: 10px 0 20px 0;">
+        <div style="font-size: 2.5rem;">🎓</div>
+        <div style="font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-top: 5px;">
+            AI Early Warning
+        </div>
+        <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">
+            Student Dropout Risk System
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    st.markdown(
+        f"**User:** {st.session_state.auth['username']}  \n"
+        f"**Role:** `{st.session_state.auth['role']}`"
+    )
+    if st.button("Logout", use_container_width=True):
+        st.session_state.auth = {"logged_in": False, "username": None, "role": None}
+        st.rerun()
+
+    st.markdown("---")
+
+    page = st.radio(
+        "Navigation",
+        [
+            "📊 Dashboard",
+            "🎯 Student Risk Analysis",
+            "📋 Intervention Playbook",
+            "💬 Parent Communication",
+            "🏛️ Government Schemes",
+            "🗺️ District Heatmap",
+            "📈 Intervention Tracker",
+            "🤖 AI Chatbot",
+        ],
+        label_visibility="collapsed",
+    )
+
+    st.markdown("---")
+
+    state_options = ["All"] + sorted(all_students_df["state"].dropna().unique().tolist())
+    selected_state = st.selectbox("State", state_options, index=0)
+    filtered_df = all_students_df if selected_state == "All" else all_students_df[all_students_df["state"] == selected_state]
+
+    district_options = ["All"] + sorted(filtered_df["district"].dropna().unique().tolist())
+    selected_district = st.selectbox("District", district_options, index=0)
+    filtered_df = filtered_df if selected_district == "All" else filtered_df[filtered_df["district"] == selected_district]
+
+    school_options = ["All"] + sorted(filtered_df["school"].dropna().unique().tolist())
+    selected_school = st.selectbox("School", school_options, index=0)
+    students_df = filtered_df if selected_school == "All" else filtered_df[filtered_df["school"] == selected_school]
+
+    st.markdown("---")
+
+    st.markdown(f"""
+    <div style="padding: 12px; background: #0f1724; border-radius: 10px;
+                border: 1px solid #1e3a5f; margin-top: 10px;">
+        <div style="color: #60a5fa; font-size: 0.75rem; font-weight: 600;">MODEL STATUS</div>
+        <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 6px;">
+            ✅ Trained — {model_accuracy:.1%} accuracy
+        </div>
+        <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 4px;">
+            📊 {len(students_df)} students in view
+        </div>
+        <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 4px;">
+            🕐 {datetime.now().strftime('%d %b %Y, %I:%M %p')}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ===================================================================
+# HELPER FUNCTIONS
+# ===================================================================
+def risk_badge(level):
+    cls = {"High": "risk-high", "Medium": "risk-medium", "Low": "risk-low"}.get(level, "risk-low")
+    return f'<span class="{cls}">{level} Risk</span>'
+
+
+def kpi_card(label, value, delta=None, icon=""):
+    delta_html = ""
+    if delta:
+        try:
+            # Extract numeric part from delta string
+            num_str = ''.join(c for c in str(delta) if c in '0123456789.-+')
+            is_positive = float(num_str) > 0 if num_str else True
+        except (ValueError, TypeError):
+            is_positive = True
+        color = "#10b981" if is_positive else "#ef4444"
+        delta_html = f'<div class="kpi-delta" style="color:{color};">{delta}</div>'
+    return f"""
+    <div class="kpi-card">
+        <div style="font-size: 1.5rem;">{icon}</div>
+        <div class="kpi-value">{value}</div>
+        <div class="kpi-label">{label}</div>
+        {delta_html}
+    </div>
+    """
+
+
+# Handle empty filtered views gracefully.
+if students_df.empty:
+    st.warning("No students found for the selected State/District/School filters.")
+    st.stop()
+
+
+# ===================================================================
+# PAGE 1: DASHBOARD
+# ===================================================================
+if page == "📊 Dashboard":
+    st.markdown('<div class="main-title">📊 Dashboard Overview</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Real-time overview of student dropout risk across your institution</div>', unsafe_allow_html=True)
+
+    # KPI Row
+    total = len(students_df)
+    high_risk = len(students_df[students_df["risk_level"] == "High"])
+    medium_risk = len(students_df[students_df["risk_level"] == "Medium"])
+    avg_attendance = round(students_df["attendance"].mean(), 1)
+
+    # Intervention success rate
+    if not interventions_df.empty:
+        improved = sum(interventions_df["attendance_after"] > interventions_df["attendance_before"])
+        success_rate = round(improved / len(interventions_df) * 100, 1)
+    else:
+        success_rate = 0
+
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        st.markdown(kpi_card("Total Students", total, icon="👥"), unsafe_allow_html=True)
+    with c2:
+        high_risk_pct = round(high_risk / total * 100, 1) if total else 0
+        st.markdown(kpi_card("High Risk", high_risk, f"{high_risk_pct}% of total", icon="🚨"), unsafe_allow_html=True)
+    with c3:
+        st.markdown(kpi_card("Avg Attendance", f"{avg_attendance}%", icon="📅"), unsafe_allow_html=True)
+    with c4:
+        st.markdown(kpi_card("Intervention Success", f"{success_rate}%", icon="✅"), unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Charts Row
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown('<div class="section-header">Risk Distribution</div>', unsafe_allow_html=True)
+        risk_counts = students_df["risk_level"].value_counts().reindex(["High", "Medium", "Low"], fill_value=0)
+        fig = px.pie(
+            values=risk_counts.values,
+            names=risk_counts.index,
+            color=risk_counts.index,
+            color_discrete_map={"High": "#ef4444", "Medium": "#f59e0b", "Low": "#10b981"},
+            hole=0.55,
+        )
+        fig.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            showlegend=True,
+            height=350,
+            margin=dict(t=20, b=20, l=20, r=20),
+        )
+        fig.update_traces(textinfo="percent+value", textfont_size=13)
+        st.plotly_chart(fig, use_container_width=True)
+
+    with col2:
+        st.markdown('<div class="section-header">Risk Score Distribution</div>', unsafe_allow_html=True)
+        fig2 = px.histogram(
+            students_df,
+            x="risk_score",
+            nbins=20,
+            color_discrete_sequence=["#4F8BF9"],
+            labels={"risk_score": "Risk Score"},
+        )
+        fig2.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            xaxis_title="Risk Score",
+            yaxis_title="Number of Students",
+            height=350,
+            margin=dict(t=20, b=40, l=40, r=20),
+        )
+        fig2.update_xaxes(gridcolor="#1e293b")
+        fig2.update_yaxes(gridcolor="#1e293b")
+        st.plotly_chart(fig2, use_container_width=True)
+
+    # Bottom Row
+    col3, col4 = st.columns(2)
+
+    with col3:
+        st.markdown('<div class="section-header">Attendance vs Math Score</div>', unsafe_allow_html=True)
+        fig3 = px.scatter(
+            students_df,
+            x="attendance",
+            y="math_score",
+            color="risk_level",
+            color_discrete_map={"High": "#ef4444", "Medium": "#f59e0b", "Low": "#10b981"},
+            opacity=0.7,
+            labels={"attendance": "Attendance %", "math_score": "Math Score"},
+        )
+        fig3.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            height=350,
+            margin=dict(t=20, b=40, l=40, r=20),
+        )
+        fig3.update_xaxes(gridcolor="#1e293b")
+        fig3.update_yaxes(gridcolor="#1e293b")
+        st.plotly_chart(fig3, use_container_width=True)
+
+    with col4:
+        st.markdown('<div class="section-header">Risk by Class</div>', unsafe_allow_html=True)
+        class_risk = students_df.groupby(["class", "risk_level"]).size().reset_index(name="count")
+        fig4 = px.bar(
+            class_risk,
+            x="class",
+            y="count",
+            color="risk_level",
+            color_discrete_map={"High": "#ef4444", "Medium": "#f59e0b", "Low": "#10b981"},
+            barmode="stack",
+            labels={"class": "Class", "count": "Students"},
+        )
+        fig4.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            height=350,
+            margin=dict(t=20, b=40, l=40, r=20),
+        )
+        fig4.update_xaxes(gridcolor="#1e293b")
+        fig4.update_yaxes(gridcolor="#1e293b")
+        st.plotly_chart(fig4, use_container_width=True)
+
+    # High Risk Students Table
+    st.markdown('<div class="section-header">🚨 High Risk Students</div>', unsafe_allow_html=True)
+    high_risk_df = students_df[students_df["high_risk_flag"]].sort_values("risk_priority", ascending=False).copy()
+    high_risk_df["phone_link"] = high_risk_df["phone"].apply(lambda p: f"tel:{p}")
+    display_cols = ["student_id", "name", "class", "district", "school", "phone_link", "attendance", "math_score", "risk_score", "risk_priority", "risk_level"]
+    st.dataframe(
+        high_risk_df[display_cols].head(15),
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "student_id": "ID",
+            "name": "Name",
+            "class": "Class",
+            "district": "District",
+            "school": "School",
+            "phone_link": st.column_config.LinkColumn("Phone", display_text="📞 Call"),
+            "attendance": st.column_config.ProgressColumn("Attendance", min_value=0, max_value=100, format="%d%%"),
+            "math_score": st.column_config.ProgressColumn("Math Score", min_value=0, max_value=100, format="%d"),
+            "risk_score": st.column_config.ProgressColumn("Risk Score", min_value=0, max_value=100, format="%.1f"),
+            "risk_priority": st.column_config.ProgressColumn("Priority Score", min_value=0, max_value=100, format="%.1f"),
+            "risk_level": "Risk Level",
+        },
+    )
+
+
+# ===================================================================
+# PAGE 2: STUDENT RISK ANALYSIS
+# ===================================================================
+elif page == "🎯 Student Risk Analysis":
+    st.markdown('<div class="main-title">🎯 Student Risk Analysis</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Detailed dropout risk assessment with explainable AI factors</div>', unsafe_allow_html=True)
+
+    # Student selector
+    col_search, col_filter = st.columns([3, 1])
+    working_df = students_df.copy()
+    with col_search:
+        filter_risk = st.selectbox("Filter by Risk", ["All", "High", "Medium", "Low"])
+        if filter_risk != "All":
+            working_df = working_df[working_df["risk_level"] == filter_risk]
+    with col_filter:
+        student_options = [
+            f"{row['student_id']} — {row['name']} (Class {row['class']}{row['section']})"
+            for _, row in working_df.iterrows()
+        ]
+        if not student_options:
+            st.info("No students found for the selected risk filter.")
+            st.stop()
+        selected = st.selectbox("Select Student", student_options, index=0)
+
+    selected_id = int(selected.split(" — ")[0])
+    student = working_df[working_df["student_id"] == selected_id].iloc[0]
+    student_dict = student.to_dict()
+
+    risk_score = student["risk_score"]
+    risk_level = student["risk_level"]
+
+    # Top row: Risk gauge + Student info
+    col_gauge, col_info = st.columns([1, 2])
+
+    with col_gauge:
+        # Risk Gauge using Plotly
+        fig_gauge = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=risk_score,
+            number={"suffix": "%", "font": {"size": 42, "color": "#e2e8f0"}},
+            gauge={
+                "axis": {"range": [0, 100], "tickcolor": "#475569"},
+                "bar": {"color": "#ef4444" if risk_score > 60 else ("#f59e0b" if risk_score > 35 else "#10b981")},
+                "bgcolor": "#1e293b",
+                "bordercolor": "#334155",
+                "steps": [
+                    {"range": [0, 35], "color": "#064e3b"},
+                    {"range": [35, 60], "color": "#78350f"},
+                    {"range": [60, 100], "color": "#7f1d1d"},
+                ],
+                "threshold": {
+                    "line": {"color": "#f8fafc", "width": 3},
+                    "thickness": 0.8,
+                    "value": risk_score,
+                },
+            },
+            title={"text": "Dropout Risk Score", "font": {"size": 16, "color": "#94a3b8"}},
+        ))
+        fig_gauge.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            height=280,
+            margin=dict(t=50, b=20, l=30, r=30),
+        )
+        st.plotly_chart(fig_gauge, use_container_width=True)
+
+    with col_info:
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, #1e293b, #1a2332); border: 1px solid #334155;
+                    border-radius: 16px; padding: 24px; margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="color: #e2e8f0; margin: 0;">{student['name']}</h3>
+                {risk_badge(risk_level)}
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">CLASS</div>
+                    <div style="color: #e2e8f0; font-weight: 600;">{student['class']}{student['section']}</div>
+                </div>
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">GENDER</div>
+                    <div style="color: #e2e8f0; font-weight: 600;">{student['gender']}</div>
+                </div>
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">ATTENDANCE</div>
+                    <div style="color: {'#ef4444' if student['attendance'] < 60 else '#10b981'}; font-weight: 600;">{student['attendance']}%</div>
+                </div>
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">DISTANCE</div>
+                    <div style="color: #e2e8f0; font-weight: 600;">{student['distance_km']} km</div>
+                </div>
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">FAMILY INCOME</div>
+                    <div style="color: #e2e8f0; font-weight: 600;">{student['family_income'].title()}</div>
+                </div>
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">SIBLING DROPOUT</div>
+                    <div style="color: {'#ef4444' if student['sibling_dropout'] == 'yes' else '#10b981'}; font-weight: 600;">{student['sibling_dropout'].title()}</div>
+                </div>
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">PHONE</div>
+                    <div style="color: #60a5fa; font-weight: 600;"><a href="tel:{student['phone']}" style="color:#60a5fa;text-decoration:none;">{student['phone']}</a></div>
+                </div>
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">DISTRICT / STATE</div>
+                    <div style="color: #e2e8f0; font-weight: 600;">{student['district']}, {student['state']}</div>
+                </div>
+                <div>
+                    <div style="color: #64748b; font-size: 0.75rem;">DROPOUT REASON</div>
+                    <div style="color: #e2e8f0; font-weight: 600;">{student['dropout_reason']}</div>
+                </div>
+            </div>
+            <div style="margin-top: 12px;">
+                <div style="color: #64748b; font-size: 0.75rem;">ADDRESS</div>
+                <div style="color: #e2e8f0; font-weight: 600;">{student['address']}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    role = st.session_state.auth["role"]
+    st.markdown('<div class="section-header">🧾 Student Profile Access</div>', unsafe_allow_html=True)
+    if role == "admin":
+        st.info("Admin view is read-only. Staff/teacher accounts can edit student details.")
+        st.dataframe(
+            pd.DataFrame([{
+                "Phone": student["phone"],
+                "Address": student["address"],
+                "Dropout Reason": student["dropout_reason"],
+                "Attendance": student["attendance"],
+                "Engagement": student["engagement_score"],
+            }]),
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        with st.form("edit_student_details"):
+            e1, e2 = st.columns(2)
+            with e1:
+                edited_phone = st.text_input("Phone", value=str(student["phone"]))
+                edited_reason = st.text_input("Dropout Reason", value=str(student["dropout_reason"]))
+                edited_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=int(student["attendance"]))
+            with e2:
+                edited_address = st.text_area("Address", value=str(student["address"]), height=70)
+                edited_engagement = st.number_input("Engagement Score", min_value=0, max_value=100, value=int(student["engagement_score"]))
+                edited_distance = st.number_input("Distance (km)", min_value=0.0, max_value=30.0, value=float(student["distance_km"]), step=0.1)
+
+            if st.form_submit_button("Save Student Updates", type="primary", use_container_width=True):
+                csv_path = os.path.join(base, "data", "students.csv")
+                source_df = pd.read_csv(csv_path)
+                source_df = ensure_student_schema(source_df, csv_path)
+                idx = source_df[source_df["student_id"] == selected_id].index
+                if len(idx) == 1:
+                    row_idx = idx[0]
+                    source_df.loc[row_idx, "phone"] = edited_phone.strip()
+                    source_df.loc[row_idx, "address"] = edited_address.strip()
+                    source_df.loc[row_idx, "dropout_reason"] = edited_reason.strip() or "None reported"
+                    source_df.loc[row_idx, "attendance"] = int(edited_attendance)
+                    source_df.loc[row_idx, "engagement_score"] = int(edited_engagement)
+                    source_df.loc[row_idx, "distance_km"] = float(edited_distance)
+                    source_df.to_csv(csv_path, index=False)
+                    st.cache_data.clear()
+                    st.cache_resource.clear()
+                    st.success("Student record updated successfully.")
+                    st.rerun()
+                else:
+                    st.error("Unable to uniquely locate this student in the source dataset.")
+
+    # Top 3 Contributing Factors
+    col_factors, col_cohort = st.columns(2)
+
+    with col_factors:
+        st.markdown('<div class="section-header">🔍 Top Contributing Factors</div>', unsafe_allow_html=True)
+        top_factors = model.get_top_factors(student_dict, top_n=3)
+
+        for i, factor in enumerate(top_factors, 1):
+            icon = "⚠️" if factor["is_risk_factor"] else "✅"
+            color = "#ef4444" if factor["is_risk_factor"] else "#10b981"
+            st.markdown(f"""
+            <div style="background: #1e293b; border-radius: 12px; padding: 16px; margin: 8px 0;
+                        border-left: 4px solid {color};">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 1.1rem;">{icon}</span>
+                        <span style="color: #e2e8f0; font-weight: 600; margin-left: 8px;">
+                            #{i} {factor['description']}
+                        </span>
+                    </div>
+                    <div style="color: {color}; font-weight: 600; font-size: 0.85rem;">
+                        {factor['direction']}
+                    </div>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 6px; margin-left: 32px;">
+                    {factor['label']}: <strong>{factor['value']}</strong> | Model importance: {factor['importance']}%
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    with col_cohort:
+        st.markdown('<div class="section-header">📊 Cohort Comparison</div>', unsafe_allow_html=True)
+        comparison = model.get_cohort_comparison(student_dict, students_df)
+
+        comp_df = pd.DataFrame(comparison)
+        fig_comp = go.Figure()
+
+        fig_comp.add_trace(go.Bar(
+            name="Student",
+            x=comp_df["indicator"],
+            y=comp_df["student_value"],
+            marker_color="#4F8BF9",
+        ))
+        fig_comp.add_trace(go.Bar(
+            name="Class Average",
+            x=comp_df["indicator"],
+            y=comp_df["class_average"],
+            marker_color="#64748b",
+        ))
+        fig_comp.add_trace(go.Bar(
+            name="Successful Students",
+            x=comp_df["indicator"],
+            y=comp_df["successful_average"],
+            marker_color="#10b981",
+        ))
+
+        fig_comp.update_layout(
+            barmode="group",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            height=320,
+            margin=dict(t=20, b=40, l=40, r=20),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+        )
+        fig_comp.update_xaxes(gridcolor="#1e293b", tickangle=-30)
+        fig_comp.update_yaxes(gridcolor="#1e293b")
+        st.plotly_chart(fig_comp, use_container_width=True)
+
+
+# ===================================================================
+# PAGE 3: INTERVENTION PLAYBOOK
+# ===================================================================
+elif page == "📋 Intervention Playbook":
+    st.markdown('<div class="main-title">📋 Intervention Playbook</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Evidence-based intervention recommendations ranked by student risk profile</div>', unsafe_allow_html=True)
+
+    # Student selector
+    student_options = [
+        f"{row['student_id']} — {row['name']} (Risk: {row['risk_score']}%)"
+        for _, row in students_df.sort_values("risk_score", ascending=False).iterrows()
+    ]
+    selected = st.selectbox("Select Student", student_options, index=0)
+    selected_id = int(selected.split(" — ")[0])
+    student = students_df[students_df["student_id"] == selected_id].iloc[0]
+    student_dict = student.to_dict()
+
+    risk_score = student["risk_score"]
+    st.markdown(f"**{student['name']}** — Class {student['class']}{student['section']} — "
+                f"Risk Score: **{risk_score}%** {risk_badge(student['risk_level'])}", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    recommendations = recommend_interventions(student_dict, top_n=6)
+
+    if not recommendations:
+        st.success("✅ This student has no significant risk factors. No interventions needed at this time.")
+    else:
+        for i, rec in enumerate(recommendations, 1):
+            success_color = "#10b981" if rec["success_rate"] >= 0.7 else ("#f59e0b" if rec["success_rate"] >= 0.6 else "#94a3b8")
+            st.markdown(f"""
+            <div class="intervention-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h4>#{i} {rec['name']}</h4>
+                        <p>{rec['description']}</p>
+                    </div>
+                    <div style="text-align: right; min-width: 120px;">
+                        <div style="color: {success_color}; font-size: 1.5rem; font-weight: 700;">
+                            {round(rec['success_rate'] * 100)}%
+                        </div>
+                        <div style="color: #64748b; font-size: 0.7rem;">SUCCESS RATE</div>
+                    </div>
+                </div>
+                <div style="margin-top: 8px;">
+                    <span style="color: #64748b; font-size: 0.8rem;">Matching factors:</span>
+                    {''.join(f'<span style="background:#1e3a5f; color:#60a5fa; padding:2px 8px; border-radius:4px; font-size:0.75rem; margin-left:4px;">{t}</span>' for t in rec['matching_triggers'])}
+                </div>
+                <div class="evidence-tag">📚 {rec['evidence']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+
+# ===================================================================
+# PAGE 4: PARENT COMMUNICATION
+# ===================================================================
+elif page == "💬 Parent Communication":
+    st.markdown('<div class="main-title">💬 Parent Communication Generator</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Auto-draft sensitive, stigma-free messages for parents in English and Tamil</div>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        student_options = [
+            f"{row['student_id']} — {row['name']}"
+            for _, row in students_df.iterrows()
+        ]
+        selected = st.selectbox("Select Student", student_options, index=0)
+        selected_id = int(selected.split(" — ")[0])
+        student = students_df[students_df["student_id"] == selected_id].iloc[0]
+
+    with col2:
+        language = st.selectbox("Language", ["English", "Tamil"])
+        msg_type = st.selectbox("Message Type", ["Formal Letter", "WhatsApp Message"])
+
+    # Auto-detect concerns
+    concerns = []
+    if student["attendance"] < 70:
+        concerns.append("attendance")
+    if student["math_score"] < 50 or student.get("science_score", 100) < 50:
+        concerns.append("academics")
+    if student.get("engagement_score", 100) < 55:
+        concerns.append("engagement")
+    if student["distance_km"] > 5:
+        concerns.append("distance")
+    if student["family_income"] == "low":
+        concerns.append("economic")
+
+    if not concerns:
+        concerns = ["attendance"]
+
+    st.markdown("**Detected Concerns:**")
+    selected_concerns = st.multiselect(
+        "Customize concerns to address",
+        ["attendance", "academics", "engagement", "distance", "economic"],
+        default=concerns,
+    )
+
+    if st.button("📝 Generate Message", type="primary", use_container_width=True):
+        lang = "tamil" if language == "Tamil" else "english"
+
+        if msg_type == "Formal Letter":
+            message = generate_parent_message(student["name"], lang, selected_concerns)
+        else:
+            message = generate_whatsapp_message(student["name"], lang, selected_concerns)
+
+        st.markdown('<div class="section-header">Generated Message</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="message-box">{message}</div>', unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.code(message, language=None)
+        st.caption("💡 Copy the message above and send via WhatsApp, SMS, or print as a letter.")
+
+    # Sensitivity guardrails note
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.info(
+        "🛡️ **Sensitivity Guardrails Active**\n\n"
+        "Messages never contain words like _dropout_, _failing_, _at risk_, or _poor performance_. "
+        "All communication uses encouraging, supportive language focused on partnership between school and family."
+    )
+
+
+# ===================================================================
+# PAGE 5: GOVERNMENT SCHEMES
+# ===================================================================
+elif page == "🏛️ Government Schemes":
+    st.markdown('<div class="main-title">🏛️ Government Scheme Matcher</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Identify eligible central and state government schemes with application checklists</div>', unsafe_allow_html=True)
+
+    # Summary
+    summary = get_scheme_summary(schemes_df)
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(kpi_card("Total Active Schemes", summary.get("total_schemes", 0), icon="📋"), unsafe_allow_html=True)
+    with c2:
+        st.markdown(kpi_card("Central Schemes", summary.get("central_schemes", 0), icon="🇮🇳"), unsafe_allow_html=True)
+    with c3:
+        st.markdown(kpi_card("State Schemes", summary.get("state_schemes", 0), icon="🏛️"), unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Student selector for eligibility check
+    student_options = [
+        f"{row['student_id']} — {row['name']} (Income: {row['family_income']}, Dist: {row['distance_km']}km)"
+        for _, row in students_df.iterrows()
+    ]
+    selected = st.selectbox("Check Eligibility for Student", student_options, index=0)
+    selected_id = int(selected.split(" — ")[0])
+    student = students_df[students_df["student_id"] == selected_id].iloc[0]
+
+    if st.button("🔍 Check Eligibility", type="primary", use_container_width=True):
+        matched = match_schemes(student, schemes_df)
+
+        if not matched:
+            st.warning("No matching schemes found for this student's profile.")
+        else:
+            st.success(f"✅ Found **{len(matched)}** eligible schemes for **{student['name']}**")
+
+            for scheme in matched:
+                docs_html = "".join(
+                    f'<div style="color: #94a3b8; font-size: 0.85rem; padding: 4px 0;">'
+                    f'☐ {item["document"]}</div>'
+                    for item in scheme["checklist"]
+                )
+
+                st.markdown(f"""
+                <div class="scheme-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h4 style="color: #e2e8f0; margin: 0 0 8px 0;">{scheme['scheme_name']}</h4>
+                            <span style="background: {'#1e3a5f' if scheme['type'] == 'Central' else '#1a3a2f'};
+                                         color: {'#60a5fa' if scheme['type'] == 'Central' else '#10b981'};
+                                         padding: 2px 10px; border-radius: 6px; font-size: 0.75rem;">
+                                {scheme['type']}
+                            </span>
+                        </div>
+                    </div>
+                    <p style="color: #94a3b8; margin: 12px 0 8px 0;">
+                        <strong style="color: #e2e8f0;">Benefit:</strong> {scheme['benefit']}
+                    </p>
+                    <div style="margin-top: 12px;">
+                        <div style="color: #e2e8f0; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px;">
+                            📋 Application Checklist:
+                        </div>
+                        {docs_html}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+
+# ===================================================================
+# PAGE 6: DISTRICT HEATMAP
+# ===================================================================
+elif page == "🗺️ District Heatmap":
+    st.markdown('<div class="main-title">🗺️ District Dropout Risk Heatmap</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Aggregated school-level risk view for district education officers</div>', unsafe_allow_html=True)
+
+    # Aggregate by school
+    school_stats = students_df.groupby("school").agg(
+        total_students=("student_id", "count"),
+        high_risk=("risk_level", lambda x: (x == "High").sum()),
+        medium_risk=("risk_level", lambda x: (x == "Medium").sum()),
+        avg_risk_score=("risk_score", "mean"),
+        avg_attendance=("attendance", "mean"),
+        avg_math=("math_score", "mean"),
+    ).reset_index()
+
+    school_stats["risk_pct"] = round(school_stats["high_risk"] / school_stats["total_students"] * 100, 1)
+    school_stats["school_short"] = school_stats["school"].apply(lambda x: x.split(" - ")[-1] if " - " in x else x)
+    school_stats = school_stats.sort_values("high_risk", ascending=False)
+
+    # Heatmap
+    st.markdown('<div class="section-header">🔥 Risk Concentration by School</div>', unsafe_allow_html=True)
+
+    fig_heat = px.treemap(
+        school_stats,
+        path=["school_short"],
+        values="total_students",
+        color="avg_risk_score",
+        color_continuous_scale=["#10b981", "#f59e0b", "#ef4444"],
+        hover_data=["total_students", "high_risk", "avg_attendance"],
+    )
+    fig_heat.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        font_color="#e2e8f0",
+        height=400,
+        margin=dict(t=20, b=20, l=20, r=20),
+        coloraxis_colorbar_title="Avg Risk",
+    )
+    st.plotly_chart(fig_heat, use_container_width=True)
+
+    # Bar chart
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown('<div class="section-header">High Risk Students by School</div>', unsafe_allow_html=True)
+        fig_bar = px.bar(
+            school_stats,
+            x="school_short",
+            y=["high_risk", "medium_risk"],
+            barmode="stack",
+            color_discrete_sequence=["#ef4444", "#f59e0b"],
+            labels={"value": "Students", "school_short": "School"},
+        )
+        fig_bar.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            height=350,
+            margin=dict(t=20, b=60, l=40, r=20),
+            legend_title="Risk Level",
+        )
+        fig_bar.update_xaxes(gridcolor="#1e293b", tickangle=-45)
+        fig_bar.update_yaxes(gridcolor="#1e293b")
+        st.plotly_chart(fig_bar, use_container_width=True)
+
+    with col2:
+        st.markdown('<div class="section-header">Average Attendance by School</div>', unsafe_allow_html=True)
+        fig_att = px.bar(
+            school_stats.sort_values("avg_attendance"),
+            x="school_short",
+            y="avg_attendance",
+            color="avg_attendance",
+            color_continuous_scale=["#ef4444", "#f59e0b", "#10b981"],
+            labels={"avg_attendance": "Avg Attendance %", "school_short": "School"},
+        )
+        fig_att.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            height=350,
+            margin=dict(t=20, b=60, l=40, r=20),
+        )
+        fig_att.update_xaxes(gridcolor="#1e293b", tickangle=-45)
+        fig_att.update_yaxes(gridcolor="#1e293b")
+        st.plotly_chart(fig_att, use_container_width=True)
+
+    # Detailed table
+    st.markdown('<div class="section-header">📊 Detailed School Statistics</div>', unsafe_allow_html=True)
+    display_stats = school_stats[["school_short", "total_students", "high_risk", "medium_risk", "risk_pct", "avg_attendance", "avg_math"]].copy()
+    display_stats.columns = ["School", "Total Students", "High Risk", "Medium Risk", "Risk %", "Avg Attendance", "Avg Math"]
+    display_stats["Avg Attendance"] = display_stats["Avg Attendance"].round(1)
+    display_stats["Avg Math"] = display_stats["Avg Math"].round(1)
+
+    st.dataframe(display_stats, use_container_width=True, hide_index=True)
+
+
+# ===================================================================
+# PAGE 7: INTERVENTION TRACKER
+# ===================================================================
+elif page == "📈 Intervention Tracker":
+    st.markdown('<div class="main-title">📈 Intervention Outcome Tracker</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Track 30-day outcomes of interventions and build an evidence base</div>', unsafe_allow_html=True)
+
+    # Effectiveness summary
+    effectiveness = get_intervention_effectiveness(interventions_df)
+
+    if not effectiveness.empty:
+        st.markdown('<div class="section-header">📊 Intervention Effectiveness Summary</div>', unsafe_allow_html=True)
+        st.dataframe(effectiveness, use_container_width=True, hide_index=True)
+
+        # Effectiveness chart
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown('<div class="section-header">Attendance Change by Intervention</div>', unsafe_allow_html=True)
+            fig_eff = px.bar(
+                effectiveness,
+                x="Intervention",
+                y="Avg Attendance Change",
+                color="Avg Attendance Change",
+                color_continuous_scale=["#ef4444", "#f59e0b", "#10b981"],
+                labels={"Avg Attendance Change": "Avg Change (pts)"},
+            )
+            fig_eff.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#e2e8f0",
+                height=350,
+                margin=dict(t=20, b=80, l=40, r=20),
+                showlegend=False,
+            )
+            fig_eff.update_xaxes(gridcolor="#1e293b", tickangle=-45)
+            fig_eff.update_yaxes(gridcolor="#1e293b")
+            st.plotly_chart(fig_eff, use_container_width=True)
+
+        with col2:
+            st.markdown('<div class="section-header">Math Score Change by Intervention</div>', unsafe_allow_html=True)
+            fig_math = px.bar(
+                effectiveness,
+                x="Intervention",
+                y="Avg Math Score Change",
+                color="Avg Math Score Change",
+                color_continuous_scale=["#ef4444", "#f59e0b", "#10b981"],
+                labels={"Avg Math Score Change": "Avg Change (pts)"},
+            )
+            fig_math.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#e2e8f0",
+                height=350,
+                margin=dict(t=20, b=80, l=40, r=20),
+                showlegend=False,
+            )
+            fig_math.update_xaxes(gridcolor="#1e293b", tickangle=-45)
+            fig_math.update_yaxes(gridcolor="#1e293b")
+            st.plotly_chart(fig_math, use_container_width=True)
+
+    # Log new intervention
+    st.markdown('<div class="section-header">📝 Log New Intervention</div>', unsafe_allow_html=True)
+
+    with st.form("log_intervention"):
+        col_a, col_b = st.columns(2)
+
+        with col_a:
+            student_options = [
+                f"{row['student_id']} — {row['name']}"
+                for _, row in students_df.iterrows()
+            ]
+            log_student = st.selectbox("Student", student_options)
+            log_type = st.selectbox("Intervention Type", [
+                "Home Visit", "Counselling Session", "Peer Buddy Assignment",
+                "Scholarship Application", "Parent-Teacher Meeting",
+                "Extra Coaching", "Bicycle Provided", "Uniform Provided",
+            ])
+
+        with col_b:
+            log_date = st.date_input("Date", value=datetime.today())
+            log_notes = st.text_area("Notes", height=80)
+
+        col_m1, col_m2 = st.columns(2)
+        with col_m1:
+            att_before = st.number_input("Attendance Before (%)", 0, 100, 50)
+            math_before = st.number_input("Math Score Before", 0, 100, 40)
+        with col_m2:
+            att_after = st.number_input("Attendance After (%)", 0, 100, 65)
+            math_after = st.number_input("Math Score After", 0, 100, 55)
+
+        submitted = st.form_submit_button("💾 Log Intervention", type="primary", use_container_width=True)
+
+        if submitted:
+            log_id = int(log_student.split(" — ")[0])
+            new_row = pd.DataFrame([{
+                "intervention_id": len(interventions_df) + 1,
+                "student_id": log_id,
+                "intervention_type": log_type,
+                "date": str(log_date),
+                "notes": log_notes,
+                "attendance_before": att_before,
+                "math_before": math_before,
+                "attendance_after": att_after,
+                "math_after": math_after,
+            }])
+
+            base = os.path.dirname(os.path.abspath(__file__))
+            csv_path = os.path.join(base, "data", "interventions.csv")
+
+            updated = pd.concat([interventions_df, new_row], ignore_index=True)
+            updated.to_csv(csv_path, index=False)
+
+            att_change = att_after - att_before
+            math_change = math_after - math_before
+
+            st.success(
+                f"✅ Intervention logged successfully!\n\n"
+                f"📊 Attendance change: **{'+' if att_change >= 0 else ''}{att_change}%** | "
+                f"Math score change: **{'+' if math_change >= 0 else ''}{math_change}**"
+            )
+
+    # Recent interventions
+    st.markdown('<div class="section-header">📋 Recent Interventions</div>', unsafe_allow_html=True)
+
+    recent = interventions_df.sort_values("date", ascending=False).head(15).copy()
+    # Merge student names
+    recent = recent.merge(
+        students_df[["student_id", "name"]], on="student_id", how="left"
+    )
+    recent["att_change"] = recent["attendance_after"] - recent["attendance_before"]
+    recent["math_change"] = recent["math_after"] - recent["math_before"]
+
+    display_recent = recent[["date", "name", "intervention_type", "attendance_before",
+                              "attendance_after", "att_change", "math_before",
+                              "math_after", "math_change"]].copy()
+    display_recent.columns = ["Date", "Student", "Intervention", "Att Before", "Att After",
+                               "Att Change", "Math Before", "Math After", "Math Change"]
+
+    st.dataframe(display_recent, use_container_width=True, hide_index=True)
+
+
+# ===================================================================
+# PAGE 8: AI CHATBOT
+# ===================================================================
+elif page == "🤖 AI Chatbot":
+    st.markdown('<div class="main-title">🤖 AI Support Chatbot</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Ask for summaries, priority students, attendance concerns, and quick actions</div>', unsafe_allow_html=True)
+
+    student_options = [
+        f"{row['student_id']} — {row['name']}"
+        for _, row in students_df.iterrows()
+    ]
+    selected = st.selectbox("Context Student (optional)", ["None"] + student_options, index=0)
+    selected_student = None
+    if selected != "None":
+        selected_id = int(selected.split(" — ")[0])
+        selected_student = students_df[students_df["student_id"] == selected_id].iloc[0]
+
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = [
+            {"role": "assistant", "content": "Ask me: summary, top high risk students, attendance issues, or this student action plan."}
+        ]
+
+    for msg in st.session_state.chat_history:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    prompt = st.chat_input("Type your question...")
+    if prompt:
+        st.session_state.chat_history.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        response = generate_chatbot_response(prompt, students_df, selected_student=selected_student)
+        st.session_state.chat_history.append({"role": "assistant", "content": response})
+        with st.chat_message("assistant"):
+            st.markdown(response)
