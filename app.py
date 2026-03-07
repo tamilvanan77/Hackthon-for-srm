@@ -224,12 +224,15 @@ USER_ACCOUNTS = {
 }
 
 
+import random
+
 def ensure_student_schema(students_df, csv_path):
     """Ensure required student columns exist; migrate file if needed."""
     required_defaults = {
         "state": "Tamil Nadu",
         "zone": "North Zone",
         "district": "Chennai",
+        "location_type": "City",  # Added for city/village filter
         "phone": "+91-00000-00000",
         "address": "Address not available",
         "dropout_reason": "None reported",
@@ -237,10 +240,15 @@ def ensure_student_schema(students_df, csv_path):
     changed = False
     for col, default_value in required_defaults.items():
         if col not in students_df.columns:
-            students_df[col] = default_value
+            if col == "location_type":
+                # Randomly assign City or Village for realistic filtering
+                students_df[col] = [random.choice(["City", "Village"]) for _ in range(len(students_df))]
+            else:
+                students_df[col] = default_value
             changed = True
         else:
-            students_df[col] = students_df[col].fillna(default_value)
+            if col != "location_type":
+                students_df[col] = students_df[col].fillna(default_value)
 
     if changed:
         students_df.to_csv(csv_path, index=False)
@@ -339,7 +347,21 @@ with st.sidebar:
 
     st.markdown("---")
 
+    # --- Role Switcher (Top Navigation substitute) ---
+    st.markdown("**Switch User View:**")
+    role_options = ["Admin", "Staff"]
+    current_idx = 0 if st.session_state.auth["role"] == "admin" else 1
+    selected_role_label = st.radio("Access Level", role_options, index=current_idx, horizontal=True, label_visibility="collapsed")
+    new_role = "admin" if selected_role_label == "Admin" else "staff"
+    
+    if new_role != st.session_state.auth["role"]:
+        st.session_state.auth["role"] = new_role
+        st.session_state.auth["username"] = "admin" if new_role == "admin" else "staff"
+        st.rerun()
+
     user_role = st.session_state.auth["role"]
+
+    st.markdown("---")
 
     if user_role == "admin":
         page = st.radio(
@@ -371,7 +393,7 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # ---- Cascading filters: Zone → District → School ----
+    # ---- Cascading filters: Zone → District → City/Village → School ----
     if user_role == "admin":
         zone_options = ["All"] + sorted(all_students_df["zone"].dropna().unique().tolist())
         selected_zone = st.selectbox("Zone", zone_options, index=0)
@@ -396,6 +418,11 @@ with st.sidebar:
         selected_district = st.selectbox("Your District", district_options_list, index=district_options_list.index(st.session_state.staff_district) if st.session_state.staff_district in district_options_list else 0)
         st.session_state.staff_district = selected_district
         filtered_df = filtered_df[filtered_df["district"] == selected_district]
+
+    if user_role == "admin":
+        loc_options = ["All", "City", "Village"]
+        selected_loc = st.selectbox("City / Village", loc_options, index=0)
+        filtered_df = filtered_df if selected_loc == "All" else filtered_df[filtered_df["location_type"] == selected_loc]
 
     school_options_list = sorted(filtered_df["school"].dropna().unique().tolist())
     if user_role == "admin":
@@ -1390,6 +1417,7 @@ elif page == "📝 Student Data Entry":
                 new_phone = st.text_input("Phone Number")
                 new_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=80)
                 new_math = st.number_input("Math Score", min_value=0, max_value=100, value=50)
+                new_location = st.selectbox("Location Type", ["City", "Village"])
             with n2:
                 new_address = st.text_area("Address", height=70)
                 new_income = st.selectbox("Family Income", ["low", "medium", "high"])
@@ -1415,6 +1443,7 @@ elif page == "📝 Student Data Entry":
                         "school": selected_school if selected_school else "Unknown",
                         "zone": st.session_state.get("staff_zone", "North Zone"),
                         "district": st.session_state.get("staff_district", "Chennai"),
+                        "location_type": new_location,
                         "state": "Tamil Nadu",
                         "phone": new_phone.strip() or "+91-00000-00000",
                         "address": new_address.strip() or "Address not available",
