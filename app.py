@@ -211,19 +211,10 @@ st.markdown("""
         padding: 16px;
     }
 
-    /* ---- Animated Background ---- */
+    /* ---- Alternative Animated Background: Aurora Mesh ---- */
+    /* Remove user's relative positioning on stApp that breaks Stacking Context */
     .stApp {
-        background-color: #0b1120;
-        background-image: 
-            radial-gradient(circle at 15% 50%, rgba(79, 139, 249, 0.08), transparent 25%),
-            radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05), transparent 25%);
-        background-attachment: fixed;
-        animation: breath 15s ease-in-out infinite alternate;
-    }
-    
-    @keyframes breath {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 100% 50%; }
+        background: transparent !important;
     }
 
     /* Subtle float animation for KPI cards */
@@ -246,33 +237,78 @@ st.markdown("""
         animation: pulse-red 2s infinite;
     }
 
-</style>
-
-<!-- Background Particles HTML Inject -->
-<div class="bg-animation">
-    <div id="stars"></div>
-    <div id="stars2"></div>
-    <div id="stars3"></div>
-</div>
-<style>
-    /* Star background effect inspired by modern dark themes */
-    .bg-animation {
+    .bg-aurora {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        z-index: -1;
+        z-index: -9999; /* Force to absolute bottom layer */
         pointer-events: none;
         overflow: hidden;
+        background-color: #0b1120;
     }
-    #stars { width: 1px; height: 1px; background: transparent; box-shadow: 1744px 122px #FFF , 134px 1321px #FFF , 92px 859px #FFF; animation: animStar 50s linear infinite; }
-    #stars:after { content: " "; position: absolute; top: 2000px; width: 1px; height: 1px; background: transparent; box-shadow: 1744px 122px #FFF , 134px 1321px #FFF , 92px 859px #FFF; }
-    #stars2 { width: 2px; height: 2px; background: transparent; box-shadow: 800px 300px #FFF , 1400px 800px #FFF; animation: animStar 100s linear infinite; }
-    #stars2:after { content: " "; position: absolute; top: 2000px; width: 2px; height: 2px; background: transparent; box-shadow: 800px 300px #FFF , 1400px 800px #FFF; }
-    
-    @keyframes animStar {
-        from { transform: translateY(0px); }
-        to { transform: translateY(-2000px); }
+    .bg-aurora .blob {
+        position: absolute;
+        width: 48vmax;
+        height: 48vmax;
+        border-radius: 50%;
+        filter: blur(70px);
+        opacity: 0.28;
+        mix-blend-mode: screen;
+    }
+    .bg-aurora .blob-1 {
+        top: -12vmax;
+        left: -8vmax;
+        background: #3b82f6;
+        animation: drift-1 18s ease-in-out infinite alternate;
+    }
+    .bg-aurora .blob-2 {
+        right: -12vmax;
+        bottom: -14vmax;
+        background: #10b981;
+        animation: drift-2 22s ease-in-out infinite alternate;
+    }
+    .bg-aurora .mesh {
+        position: absolute;
+        inset: -20%;
+        opacity: 0.16;
+        background-image:
+            linear-gradient(rgba(148, 163, 184, 0.10) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(148, 163, 184, 0.10) 1px, transparent 1px);
+        background-size: 56px 56px;
+        transform: perspective(700px) rotateX(63deg) translateY(24%);
+        animation: mesh-pan 28s linear infinite;
+    }
+    @keyframes drift-1 {
+        0% { transform: translate3d(0, 0, 0) scale(1); }
+        100% { transform: translate3d(9vmax, 7vmax, 0) scale(1.08); }
+    }
+    @keyframes drift-2 {
+        0% { transform: translate3d(0, 0, 0) scale(1); }
+        100% { transform: translate3d(-8vmax, -6vmax, 0) scale(1.1); }
+    }
+    /* Streamlit Background Override Hack */
+    [data-testid="stAppViewContainer"] {
+        background-color: transparent !important;
+        position: relative;
+        z-index: 1; /* Bring UI to front */
+    }
+    [data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+    .stApp .main {
+        background-color: transparent !important;
+    }
+    .block-container {
+        position: relative;
+        z-index: 10;
+        background: transparent !important;
     }
 </style>
+<!-- Render Aurora Background at absolute bottom layer -->
+<div class="bg-aurora">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="mesh"></div>
+</div>
 """, unsafe_allow_html=True)
 
 
