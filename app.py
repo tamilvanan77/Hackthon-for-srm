@@ -210,6 +210,68 @@ st.markdown("""
         border-radius: 12px;
         padding: 16px;
     }
+
+    /* ---- Animated Background ---- */
+    .stApp {
+        background-color: #0b1120;
+        background-image: 
+            radial-gradient(circle at 15% 50%, rgba(79, 139, 249, 0.08), transparent 25%),
+            radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05), transparent 25%);
+        background-attachment: fixed;
+        animation: breath 15s ease-in-out infinite alternate;
+    }
+    
+    @keyframes breath {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+    }
+
+    /* Subtle float animation for KPI cards */
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(0px); }
+    }
+    .kpi-card {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    /* Dynamic pulsing for high risk badges */
+    @keyframes pulse-red {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .risk-high {
+        animation: pulse-red 2s infinite;
+    }
+
+</style>
+
+<!-- Background Particles HTML Inject -->
+<div class="bg-animation">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>
+</div>
+<style>
+    /* Star background effect inspired by modern dark themes */
+    .bg-animation {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: -1;
+        pointer-events: none;
+        overflow: hidden;
+    }
+    #stars { width: 1px; height: 1px; background: transparent; box-shadow: 1744px 122px #FFF , 134px 1321px #FFF , 92px 859px #FFF; animation: animStar 50s linear infinite; }
+    #stars:after { content: " "; position: absolute; top: 2000px; width: 1px; height: 1px; background: transparent; box-shadow: 1744px 122px #FFF , 134px 1321px #FFF , 92px 859px #FFF; }
+    #stars2 { width: 2px; height: 2px; background: transparent; box-shadow: 800px 300px #FFF , 1400px 800px #FFF; animation: animStar 100s linear infinite; }
+    #stars2:after { content: " "; position: absolute; top: 2000px; width: 2px; height: 2px; background: transparent; box-shadow: 800px 300px #FFF , 1400px 800px #FFF; }
+    
+    @keyframes animStar {
+        from { transform: translateY(0px); }
+        to { transform: translateY(-2000px); }
+    }
 </style>
 """, unsafe_allow_html=True)
 
