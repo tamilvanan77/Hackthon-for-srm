@@ -575,7 +575,7 @@ student_id,name,gender,class,section,school,zone,district,state,phone,address,at
 574,Eswari,Female,8,B,GHSS Sriperumbudur,North Zone,Kancheepuram,Tamil Nadu,+91-73073-30488,"156, Sriperumbudur Colony",69,46,44,74,yes,9.1,no,medium,primary,84,None reported,0,Village
 575,Kishore,Male,9,B,GHSS Thoothukudi,South Zone,Thoothukudi,Tamil Nadu,+91-71450-75991,"9, Thoothukudi Main Road",58,65,19,52,yes,12.0,no,low,primary,63,Household responsibilities,1,City
 576,Gowri,Female,6,C,GHSS Madurai East,South Zone,Madurai,Tamil Nadu,+91-96505-45060,"230, Madurai East Cross Street",53,39,42,66,yes,3.5,no,low,none,60,Economic hardship,1,City
-577,Kumaran,Male,6,B,GHSS Nagapattinam,Central Zone,Nagapattinam,Tamil Nadu,+91-96862-15501,"130, Nagapattinam Main Road",40,23,48,72,yes,11.7,no,high,secondary,29,Long travel distance,1,Village
+577,Kumaran,Male,6,B,GHSS Nagapattinam,Central Zone,Nagapattinam,Tamil Nadu,+91-96862-15501,"130, Nagapattinam Main Road",40,24,48,72,yes,11.7,no,high,secondary,34,Long travel distance,1,Village
 578,Mani,Male,6,A,GHSS Trichy Fort,Central Zone,Trichy,Tamil Nadu,+91-66507-30223,"166, Trichy Fort Nagar",60,47,78,55,yes,5.6,no,low,primary,69,None reported,0,Village
 579,Kavya,Female,6,A,GHSS Pudukkottai,Central Zone,Pudukkottai,Tamil Nadu,+91-78792-76194,"44, Pudukkottai Main Road",80,26,75,71,yes,0.6,no,high,secondary,77,None reported,0,City
 580,Bhavani,Female,9,B,GHSS Rasipuram,West Zone,Namakkal,Tamil Nadu,+91-87093-63648,"230, Rasipuram Colony",100,20,85,58,yes,9.2,no,medium,none,68,Early work pressure,1,City
@@ -2006,3 +2006,6 @@ student_id,name,gender,class,section,school,zone,district,state,phone,address,at
 2005,Test Student John Doe,Male,6,A,GHSS Nagapattinam,Central Zone,Nagapattinam,Tamil Nadu,1234567890,123 Test Street,80,50,50,50,yes,2.0,no,low,none,70,None reported,0,City
 2006,Test Student John Doe,Male,6,A,GHSS Nagapattinam,Central Zone,Nagapattinam,Tamil Nadu,1234567890,123 Test Street,80,50,50,50,yes,2.0,no,low,none,70,None reported,0,City
 2007,Test Student John Doe,Male,6,A,GHSS Nagapattinam,Central Zone,Nagapattinam,Tamil Nadu,1234567890,123 Test Street,80,50,50,50,yes,2.0,no,low,none,70,None reported,0,City
+2008,kishore,Male,10,B,GHSS Nagapattinam,Central Zone,Nagapattinam,Tamil Nadu,9655518530,pandurangan kovil street,10,50,50,50,yes,20.0,yes,high,secondary,70,None reported,0,Village
+2009,kishore,Male,10,B,GHSS Nagapattinam,Central Zone,Nagapattinam,Tamil Nadu,9655518530,pandurangan kovil street,10,50,50,50,yes,20.0,yes,high,secondary,70,None reported,0,Village
+2010,kishore,Male,10,B,GHSS Nagapattinam,Central Zone,Nagapattinam,Tamil Nadu,9655518530,pandurangan kovil street,10,50,50,50,yes,20.0,yes,high,secondary,70,None reported,0,Village

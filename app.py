@@ -761,6 +761,78 @@ elif page == "🎯 Student Risk Analysis":
 
     st.markdown("<br>", unsafe_allow_html=True)
 
+    # -----------------------------------------------------------
+    # ADVANCED HACKATHON FEATURES: What-If Simulator & Scheme Matcher
+    # -----------------------------------------------------------
+    col_sim, col_schemes = st.columns(2)
+
+    with col_sim:
+        st.markdown('<div class="section-header">⚙️ Predictive "What-If" Simulator</div>', unsafe_allow_html=True)
+        st.markdown("<p style='color: #94a3b8; font-size: 0.9rem;'>Move the sliders to see how improving attendance and scores affects the AI risk prediction.</p>", unsafe_allow_html=True)
+        
+        sim_attendance = st.slider("Simulated Attendance (%)", min_value=0, max_value=100, value=int(student['attendance']))
+        sim_math = st.slider("Simulated Math Score", min_value=0, max_value=100, value=int(student['math_score']))
+        sim_engagement = st.slider("Simulated Engagement", min_value=0, max_value=100, value=int(student['engagement_score']))
+        
+        # Run prediction on simulated data
+        sim_student = student_dict.copy()
+        sim_student["attendance"] = sim_attendance
+        sim_student["math_score"] = sim_math
+        sim_student["engagement_score"] = sim_engagement
+        
+        sim_risk = model.predict_batch(pd.DataFrame([sim_student]))[0]
+        risk_diff = round(sim_risk - risk_score, 1)
+        
+        st.metric(
+            label="Simulated Risk Score", 
+            value=f"{sim_risk}%", 
+            delta=f"{risk_diff}%" if risk_diff != 0 else "No Change", 
+            delta_color="inverse"
+        )
+        if sim_risk < 35 and risk_score >= 35:
+            st.success("✨ This intervention would move the student to LOW risk!")
+
+    with col_schemes:
+        st.markdown('<div class="section-header">🏛️ Auto-Matched Schemes</div>', unsafe_allow_html=True)
+        st.markdown("<p style='color: #94a3b8; font-size: 0.9rem;'>AI cross-referenced this student's profile against government schemes.</p>", unsafe_allow_html=True)
+        
+        # Simple logical matcher based on scheme attributes
+        matched_schemes = []
+        for _, scheme in schemes_df.iterrows():
+            match = True
+            
+            # Distance logic
+            if scheme['eligibility_distance'] > 0 and student['distance_km'] < scheme['eligibility_distance']:
+                match = False
+                
+            # Income logic
+            if scheme['eligibility_income'] == 'low' and student['family_income'] != 'low':
+                match = False
+                
+            # Gender logic (implicit in some scheme names)
+            if "Girl" in scheme['scheme_name'] and student['gender'] != 'Female':
+                match = False
+                
+            if match:
+                matched_schemes.append(scheme)
+                
+        if matched_schemes:
+            for s in matched_schemes[:3]: # Show top 3 matches
+                st.markdown(f"""
+                <div style="background: rgba(16, 185, 129, 0.1); border-left: 3px solid #10b981; padding: 10px; margin-bottom: 8px; border-radius: 4px;">
+                    <div style="color: #e2e8f0; font-weight: bold; font-size: 0.95rem;">{s['scheme_name']}</div>
+                    <div style="color: #94a3b8; font-size: 0.8rem;">{s['benefit']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+            if len(matched_schemes) > 3:
+                st.markdown(f"<p style='color: #60a5fa; font-size: 0.85rem;'>+ {len(matched_schemes) - 3} more schemes match.</p>", unsafe_allow_html=True)
+                
+            st.button("✉️ SMS Parent Application Details", key=f"sms_{student['student_id']}", help="Feature demo: This would send an SMS to the parent's phone.")
+        else:
+            st.info("No specifically matched conditional schemes found (only general universal schemes apply).")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
     role = st.session_state.auth["role"]
     st.markdown('<div class="section-header">🧾 Student Profile Access</div>', unsafe_allow_html=True)
     if role == "admin":
@@ -1090,25 +1162,81 @@ elif page == "🗺️ District Heatmap":
     school_stats["school_short"] = school_stats["school"].apply(lambda x: x.split(" - ")[-1] if " - " in x else x)
     school_stats = school_stats.sort_values("high_risk", ascending=False)
 
-    # Heatmap
-    st.markdown('<div class="section-header">🔥 Risk Concentration by School</div>', unsafe_allow_html=True)
+    # Heatmap & Geographical Map
+    st.markdown('<div class="section-header">🌍 State-wide Risk Map & Concentration</div>', unsafe_allow_html=True)
+    
+    # Static coordinates for TN Districts
+    TN_DISTRICT_COORDS = {
+        "Chennai": (13.0827, 80.2707),
+        "Kancheepuram": (12.8342, 79.7036),
+        "Tiruvallur": (13.1436, 79.9126),
+        "Vellore": (12.9165, 79.1325),
+        "Madurai": (9.9252, 78.1198),
+        "Tirunelveli": (8.7139, 77.7567),
+        "Kanyakumari": (8.0883, 77.5385),
+        "Thoothukudi": (8.7642, 78.1348),
+        "Coimbatore": (11.0168, 76.9558),
+        "Tiruppur": (11.1085, 77.3411),
+        "Erode": (11.3410, 77.7172),
+        "Salem": (11.6643, 78.1460),
+        "Tiruchirappalli": (10.7905, 78.7047),
+        "Thanjavur": (10.7870, 79.1378),
+        "Karur": (10.9601, 78.0766),
+        "Pudukkottai": (10.3833, 78.8001),
+        "Cuddalore": (11.7480, 79.7714),
+        "Viluppuram": (11.9401, 79.4861),
+        "Tiruvannamalai": (12.2253, 79.0747),
+        "Nagapattinam": (10.7656, 79.8424),
+        "Ariyalur": (11.1401, 79.0786),
+    }
 
-    fig_heat = px.treemap(
-        school_stats,
-        path=["school_short"],
-        values="total_students",
+    dist_stats = students_df.groupby("district").agg(
+        total_students=("student_id", "count"),
+        high_risk=("risk_level", lambda x: (x == "High").sum()),
+        avg_risk_score=("risk_score", "mean"),
+    ).reset_index()
+    
+    dist_stats["lat"] = dist_stats["district"].map(lambda x: TN_DISTRICT_COORDS.get(x, (11.1271, 78.6569))[0])
+    dist_stats["lon"] = dist_stats["district"].map(lambda x: TN_DISTRICT_COORDS.get(x, (11.1271, 78.6569))[1])
+
+    fig_map = px.scatter_mapbox(
+        dist_stats,
+        lat="lat",
+        lon="lon",
+        size="total_students",
         color="avg_risk_score",
         color_continuous_scale=["#10b981", "#f59e0b", "#ef4444"],
-        hover_data=["total_students", "high_risk", "avg_attendance"],
+        size_max=35,
+        zoom=5.5,
+        center={"lat": 11.1271, "lon": 78.6569},
+        hover_name="district",
+        hover_data={"total_students": True, "high_risk": True, "avg_risk_score": ":.1f", "lat": False, "lon": False},
+        mapbox_style="carto-darkmatter"
     )
-    fig_heat.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        font_color="#e2e8f0",
-        height=400,
-        margin=dict(t=20, b=20, l=20, r=20),
-        coloraxis_colorbar_title="Avg Risk",
-    )
-    st.plotly_chart(fig_heat, use_container_width=True)
+    fig_map.update_layout(height=450, margin={"r":0,"t":0,"l":0,"b":0})
+    
+    col_map, col_tree = st.columns(2)
+    with col_map:
+        st.plotly_chart(fig_map, use_container_width=True)
+    
+    with col_tree:
+
+        fig_heat = px.treemap(
+            school_stats,
+            path=["school_short"],
+            values="total_students",
+            color="avg_risk_score",
+            color_continuous_scale=["#10b981", "#f59e0b", "#ef4444"],
+            hover_data=["total_students", "high_risk", "avg_attendance"],
+        )
+        fig_heat.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            font_color="#e2e8f0",
+            height=450,
+            margin=dict(t=0, b=0, l=0, r=0),
+            coloraxis_colorbar_title="Avg Risk",
+        )
+        st.plotly_chart(fig_heat, use_container_width=True)
 
     # Bar chart
     col1, col2 = st.columns(2)
@@ -1226,6 +1354,37 @@ elif page == "📈 Intervention Tracker":
             fig_math.update_xaxes(gridcolor="#1e293b", tickangle=-45)
             fig_math.update_yaxes(gridcolor="#1e293b")
             st.plotly_chart(fig_math, use_container_width=True)
+
+        # Gamified Staff Leaderboard
+        st.markdown('<div class="section-header">🏆 Top Impact Leaders (Schools)</div>', unsafe_allow_html=True)
+        st.markdown("<p style='color: #94a3b8; font-size: 0.9rem;'>Ranking schools by the most successful interventions logged (where attendance improved).</p>", unsafe_allow_html=True)
+        
+        # Join interventions to get school names
+        interv_with_school = interventions_df.merge(
+            students_df[["student_id", "school", "zone"]], on="student_id", how="left"
+        ).dropna(subset=["school"])
+        
+        # Successful = attendance went up
+        successful_interventions = interv_with_school[interv_with_school["attendance_after"] > interv_with_school["attendance_before"]]
+        leaderboard = successful_interventions.groupby(["school", "zone"]).size().reset_index(name="successful_interventions")
+        leaderboard = leaderboard.sort_values("successful_interventions", ascending=False).head(5)
+        
+        if not leaderboard.empty:
+            cols = st.columns(len(leaderboard))
+            medals = ["🥇", "🥈", "🥉", "🏅", "🏅"]
+            for i, (_, row) in enumerate(leaderboard.iterrows()):
+                with cols[i]:
+                    st.markdown(f"""
+                    <div style="background: linear-gradient(180deg, rgba(245, 158, 11, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%); 
+                                border: 1px solid #334155; border-top: 3px solid #f59e0b; border-radius: 12px; padding: 16px; text-align: center;">
+                        <div style="font-size: 2rem;">{medals[i]}</div>
+                        <div style="color: #e2e8f0; font-weight: 700; font-size: 1.1rem; margin-top: 8px;">{row['successful_interventions']} Wins</div>
+                        <div style="color: #60a5fa; font-size: 0.8rem; margin-top: 4px; line-height: 1.2;">{row['school'].split(' - ')[-1]}</div>
+                        <div style="color: #64748b; font-size: 0.7rem; margin-top: 8px;">{row['zone']}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+        else:
+            st.info("No successful interventions logged yet to calculate leaderboard.")
 
     # Log new intervention
     st.markdown('<div class="section-header">📝 Log New Intervention</div>', unsafe_allow_html=True)
