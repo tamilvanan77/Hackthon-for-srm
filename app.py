@@ -32,11 +32,57 @@ from backend.chatbot import generate_chatbot_response
 # PAGE CONFIG
 # ===================================================================
 st.set_page_config(
-    page_title="AI Early Warning System — Student Dropout Risk",
+    page_title="SafePath AI — Student Dropout Risk",
     page_icon="🎓",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
+
+# ===================================================================
+# INJECT ANIMATED BACKGROUND
+# ===================================================================
+import streamlit.components.v1 as components
+
+def inject_animated_background():
+    base = os.path.dirname(os.path.abspath(__file__))
+    bg_path = os.path.join(base, "static", "background.html")
+    if os.path.exists(bg_path):
+        with open(bg_path, "r", encoding="utf-8") as f:
+            bg_html = f.read()
+        # We inject the HTML and CSS to position it absolutely covering the screen inside Streamlit's iframe
+        components.html(
+            f"""
+            <style>
+                body {{ margin: 0; padding: 0; overflow: hidden; }}
+                /* Ensure iframe is transparent */
+                html, body {{ background: transparent !important; }}
+            </style>
+            {bg_html}
+            <script>
+                // Tell parent streamlit to make this iframe full screen and fixed securely
+                const parent = window.parent.document;
+                const iframes = parent.getElementsByTagName('iframe');
+                for (let i = 0; i < iframes.length; i++) {{
+                    if (iframes[i].contentDocument === document) {{
+                        const container = iframes[i].parentElement;
+                        container.style.position = 'fixed';
+                        container.style.top = '0';
+                        container.style.left = '0';
+                        container.style.width = '100vw';
+                        container.style.height = '100vh';
+                        container.style.zIndex = '-1';
+                        iframes[i].style.width = '100vw';
+                        iframes[i].style.height = '100vh';
+                        break;
+                    }}
+                }}
+            </script>
+            """,
+            height=0,
+            width=0,
+        )
+
+inject_animated_background()
 
 # ===================================================================
 # CUSTOM CSS
@@ -45,271 +91,485 @@ st.markdown("""
 <style>
     /* ---- Global ---- */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
     }
 
-    /* ---- Sidebar ---- */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f1724 0%, #162033 100%);
+    /* Apply 'Outfit' font to all Navigation elements, Buttons, and Headings for a 'Luxe' feel */
+    h1, h2, h3, h4, .main-title, .section-header, button, .stTabs [data-baseweb="tab"], .role-pill, .topnav-user {
+        font-family: 'Outfit', sans-serif !important;
     }
+
+    /* ---- Hide native Streamlit chrome ---- */
+    #MainMenu { visibility: hidden; }
+    footer    { visibility: hidden; }
+    header    { visibility: hidden; }
+    /* hide native sidebar collapse button */
+    [data-testid="stSidebarCollapseButton"] { display: none !important; }
+    /* collapse sidebar by default but allow Streamlit to still bind widgets */
+    [data-testid="stSidebar"] {
+        background: rgba(10, 16, 32, 0.85) !important;
+        backdrop-filter: blur(16px) !important;
+        border-right: 1px solid rgba(79,139,249,0.12) !important;
+    }
+
+    /* ---- Page Load & Stagger Animations ---- */
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Apply cascading fade-in to the main container and all major un-targeted blocks */
+    [data-testid="block-container"], .section-header, .kpi-card, [data-testid="stVerticalBlockBorderWrapper"] {
+        animation: fadeInUp 0.5s ease-out forwards;
+        animation-fill-mode: both;
+    }
+    
+    /* ---- Custom Glowing Scrollbars ---- */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.2); 
+    }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(79, 139, 249, 0.4); 
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(56, 189, 248, 0.8); 
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+
+    /* ---- Top Navbar ---- */
+    #custom-topnav {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%;
+        height: 56px;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 14px;
+        background: rgba(6, 11, 23, 0.82);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(79, 139, 249, 0.18);
+        box-shadow: 0 2px 20px rgba(0,0,0,0.35);
+    }
+    #sidebar-toggle {
+        background: none;
+        border: 1px solid rgba(79,139,249,0.3);
+        border-radius: 8px;
+        color: #4F8BF9;
+        font-size: 1.15rem;
+        width: 36px; height: 36px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.2s, border-color 0.2s;
+        flex-shrink: 0;
+    }
+    #sidebar-toggle:hover {
+        background: rgba(79,139,249,0.12);
+        border-color: rgba(79,139,249,0.6);
+    }
+    #topnav-logo {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #ffffff 0%, #38bdf8 60%, #818cf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        white-space: nowrap;
+        flex: 1;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+    #topnav-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+    .topnav-user {
+        color: #e2e8f0;
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    .role-pill {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        letter-spacing: 0.3px;
+    }
+    .role-pill-active {
+        background: linear-gradient(135deg, #4F8BF9, #38bdf8);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 12px rgba(79, 139, 249, 0.4);
+    }
+    .role-pill-inactive {
+        background: rgba(30, 41, 59, 0.5);
+        color: #94a3b8;
+        border-color: rgba(79,139,249,0.3);
+    }
+    .role-pill-inactive:hover {
+        border-color: rgba(56, 189, 248, 0.8);
+        color: #ffffff;
+        box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+    .topnav-logout {
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: rgba(239,68,68,0.12);
+        border: 1px solid rgba(239,68,68,0.3);
+        color: #ef4444;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .topnav-logout:hover {
+        background: rgba(239,68,68,0.25);
+        border-color: rgba(239,68,68,0.6);
+    }
+
+    /* ---- Push main content below navbar ---- */
+    [data-testid="stAppViewContainer"] {
+        padding-top: 56px !important;
+    }
+    [data-testid="block-container"] {
+        padding-top: 1.5rem !important;
+    }
+
+    /* ---- Background transparent ---- */
+    .stApp,
+    [data-testid="stAppViewContainer"],
+    [data-testid="stHeader"] {
+        background: transparent !important;
+    }
+
+    /* ---- DataFrame (Table) Glassmorphic Overrides ---- */
+    [data-testid="stDataFrame"] > div {
+        background-color: transparent !important;
+    }
+    /* Hide the gross internal border */
+    [data-testid="stDataFrame"] [data-testid="stTable"] {
+        background-color: transparent !important;
+    }
+    /* Style cells */
+    [data-testid="stDataFrame"] td, [data-testid="stDataFrame"] th {
+        background-color: rgba(15, 23, 42, 0.4) !important;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1) !important;
+        border-right: none !important;
+        color: #e2e8f0 !important;
+        padding: 12px 16px !important;
+        transition: background-color 0.2s;
+    }
+    /* Hover highlight for rows */
+    [data-testid="stDataFrame"] tr:hover td {
+        background-color: rgba(79, 139, 249, 0.15) !important;
+    }
+    /* Header specific styles */
+    [data-testid="stDataFrame"] th {
+        background-color: rgba(30, 41, 59, 0.8) !important;
+        font-weight: 600 !important;
+        color: #f8fafc !important;
+        border-bottom: 2px solid rgba(79, 139, 249, 0.3) !important;
+    }
+    /* Attempt to hide row index numbers if they render as th */
+    [data-testid="stDataFrame"] th:first-child, [data-testid="stDataFrame"] td:first-child {
+        display: none !important; 
+    }
+
+    /* ---- Sidebar ---- */
     [data-testid="stSidebar"] .stRadio > label {
         color: #94a3b8 !important;
         font-size: 0.9rem;
     }
 
-    /* ---- KPI Cards ---- */
+    /* ---- Glassmorphic Containers (st.container(border=True)) ---- */
+    [data-testid="stVerticalBlockBorderWrapper"] > div {
+        background: rgba(15, 23, 42, 0.45) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border: 1px solid rgba(79, 139, 249, 0.2) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"]:hover > div {
+        box-shadow: 0 12px 40px 0 rgba(79, 139, 249, 0.15) !important;
+        border-color: rgba(79, 139, 249, 0.4) !important;
+    }
+
+    /* ---- Premium Inputs (Text, Number, Selectbox) ---- */
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input,
+    .stSelectbox > div > div > div {
+        background-color: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        border-radius: 12px !important;
+        color: #f8fafc !important;
+        transition: all 0.3s ease !important;
+    }
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus,
+    .stSelectbox > div > div > div:focus {
+        border-color: #4F8BF9 !important;
+        box-shadow: 0 0 0 2px rgba(79, 139, 249, 0.25) !important;
+        background-color: rgba(15, 23, 42, 0.8) !important;
+    }
+    /* Fix selectbox dropdown arrow area */
+    .stSelectbox > div > div > div > div:last-child {
+        color: #94a3b8 !important;
+    }
+
+    /* ---- Premium Buttons ---- */
+    /* Primary Button */
+    button[kind="primary"] {
+        background: linear-gradient(135deg, #4F8BF9 0%, #38bdf8 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.5px !important;
+        padding: 0.5rem 1rem !important;
+        box-shadow: 0 4px 14px 0 rgba(79, 139, 249, 0.39) !important;
+        transition: all 0.3s ease !important;
+    }
+    button[kind="primary"]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(79, 139, 249, 0.6) !important;
+    }
+    button[kind="primary"]:active {
+        transform: translateY(0) !important;
+    }
+    /* Secondary/Default Button */
+    button[kind="secondary"] {
+        background: rgba(30, 41, 59, 0.6) !important;
+        backdrop-filter: blur(8px) !important;
+        color: #e2e8f0 !important;
+        border: 1px solid rgba(148, 163, 184, 0.3) !important;
+        border-radius: 12px !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
+    }
+    button[kind="secondary"]:hover {
+        background: rgba(47, 63, 86, 0.8) !important;
+        border-color: rgba(56, 189, 248, 0.8) !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important;
+    }
+
+    /* ---- Mobile Responsiveness ---- */
+    @media (max-width: 768px) {
+        .kpi-value { font-size: 2.0rem; }
+        .kpi-card { padding: 16px; margin-bottom: 12px; }
+        #custom-topnav { padding: 0 10px; gap: 8px; }
+        #topnav-logo { font-size: 0.95rem; }
+        [data-testid="block-container"] { padding: 1rem 0.5rem !important; }
+        .section-header { font-size: 1.2rem; margin: 16px 0 10px 0; }
+        /* Reset DataFrame padding to fit on mobile */
+        [data-testid="stDataFrame"] td, [data-testid="stDataFrame"] th {
+            padding: 8px !important;
+            font-size: 0.8rem;
+        }
+    }
+
+    /* ---- Modern Segmented Tabs ---- */
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: rgba(15, 23, 42, 0.4) !important;
+        border-radius: 12px;
+        padding: 4px;
+        gap: 8px;
+        border-bottom: none !important;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: transparent;
+        border-radius: 8px !important;
+        color: #94a3b8 !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        border: none !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #e2e8f0 !important;
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(79, 139, 249, 0.15) !important;
+        color: #4F8BF9 !important;
+        border: 1px solid rgba(79, 139, 249, 0.3) !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    }
+    /* Hide the active tab underline indicator */
+    .stTabs [data-baseweb="tab-highlight"] {
+        display: none !important;
+    }
+
+    /* ---- KPI Cards (Glassmorphic Update) ---- */
     .kpi-card {
-        background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
-        border: 1px solid #334155;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(79, 139, 249, 0.15);
         border-radius: 16px;
         padding: 24px;
         text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
     }
     .kpi-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(79, 139, 249, 0.15);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(79, 139, 249, 0.25);
+        border-color: rgba(79, 139, 249, 0.4);
     }
     .kpi-value {
-        font-size: 2.4rem;
+        font-size: 2.6rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #4F8BF9 0%, #38bdf8 100%);
+        background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 8px 0;
+        text-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
     }
     .kpi-label {
-        color: #94a3b8;
+        color: #cbd5e1;
         font-size: 0.85rem;
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
     }
-    .kpi-delta {
-        font-size: 0.8rem;
-        margin-top: 4px;
-    }
+    .kpi-delta { font-size: 0.8rem; margin-top: 4px; font-weight: 500; }
 
-    /* ---- Risk Badge ---- */
+    /* ---- Risk Badges ---- */
     .risk-high {
         background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
-        color: white;
-        padding: 4px 14px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.8rem;
+        color: white; padding: 4px 14px; border-radius: 20px;
+        font-weight: 600; font-size: 0.8rem;
+        animation: pulse-red 2s infinite;
     }
     .risk-medium {
         background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
-        color: white;
-        padding: 4px 14px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.8rem;
+        color: white; padding: 4px 14px; border-radius: 20px;
+        font-weight: 600; font-size: 0.8rem;
     }
     .risk-low {
         background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-        color: white;
-        padding: 4px 14px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.8rem;
+        color: white; padding: 4px 14px; border-radius: 20px;
+        font-weight: 600; font-size: 0.8rem;
     }
 
     /* ---- Section Headers ---- */
     .section-header {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #e2e8f0;
-        margin: 20px 0 10px 0;
-        padding-bottom: 8px;
-        border-bottom: 2px solid #334155;
+        font-size: 1.4rem; font-weight: 600; color: #f8fafc;
+        margin: 24px 0 16px 0; padding-bottom: 8px;
+        border-bottom: 1px solid rgba(79, 139, 249, 0.2);
+        display: inline-block;
     }
 
-    /* ---- Intervention Card ---- */
+    /* ---- Intervention Card (Glassmorphic) ---- */
     .intervention-card {
-        background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
-        border: 1px solid #334155;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(79, 139, 249, 0.15); 
         border-radius: 12px;
-        padding: 20px;
-        margin: 10px 0;
+        padding: 20px; margin: 10px 0;
         border-left: 4px solid #4F8BF9;
+        transition: all 0.3s ease;
     }
-    .intervention-card h4 {
-        color: #e2e8f0;
-        margin: 0 0 8px 0;
+    .intervention-card:hover {
+        background: rgba(15, 23, 42, 0.6);
+        border-color: rgba(79, 139, 249, 0.4);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-    .intervention-card p {
-        color: #94a3b8;
-        font-size: 0.9rem;
-        margin: 4px 0;
-    }
+    .intervention-card h4 { color: #f1f5f9; margin: 0 0 8px 0; font-weight: 600;}
+    .intervention-card p  { color: #cbd5e1; font-size: 0.95rem; margin: 4px 0; line-height: 1.5;}
     .evidence-tag {
-        background: #1e3a5f;
-        color: #60a5fa;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        display: inline-block;
-        margin-top: 8px;
+        background: rgba(79, 139, 249, 0.15); color: #60a5fa;
+        padding: 4px 10px; border-radius: 6px;
+        font-size: 0.75rem; display: inline-block; margin-top: 8px;
     }
 
     /* ---- Scheme Card ---- */
     .scheme-card {
         background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 20px;
-        margin: 10px 0;
+        border: 1px solid #334155; border-radius: 12px;
+        padding: 20px; margin: 10px 0;
         border-left: 4px solid #10b981;
     }
 
     /* ---- Message Box ---- */
     .message-box {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 20px;
-        white-space: pre-wrap;
-        color: #e2e8f0;
-        font-size: 0.95rem;
-        line-height: 1.6;
+        background: #1e293b; border: 1px solid #334155;
+        border-radius: 12px; padding: 20px;
+        white-space: pre-wrap; color: #e2e8f0;
+        font-size: 0.95rem; line-height: 1.6;
     }
 
     /* ---- Gauge ---- */
-    .gauge-container {
-        text-align: center;
-        padding: 20px;
-    }
-
-    /* ---- Hide default Streamlit elements ---- */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    .gauge-container { text-align: center; padding: 20px; }
 
     /* ---- Title styling ---- */
     .main-title {
-        font-size: 1.8rem;
-        font-weight: 700;
+        font-size: 1.8rem; font-weight: 700;
         background: linear-gradient(135deg, #4F8BF9 0%, #38bdf8 50%, #818cf8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         margin-bottom: 5px;
     }
     .main-subtitle {
-        color: #64748b;
-        font-size: 0.95rem;
-        margin-bottom: 25px;
+        color: #64748b; font-size: 0.95rem; margin-bottom: 25px;
     }
 
     div[data-testid="stMetric"] {
         background: linear-gradient(135deg, #1e293b 0%, #1a2332 100%);
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 16px;
+        border: 1px solid #334155; border-radius: 12px; padding: 16px;
     }
 
-    /* ---- Alternative Animated Background: Aurora Mesh ---- */
-    /* Remove user's relative positioning on stApp that breaks Stacking Context */
-    .stApp {
-        background: transparent !important;
-    }
-
-    /* Subtle float animation for KPI cards */
+    /* ---- Keyframes ---- */
     @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-5px); }
+        0%   { transform: translateY(0px); }
+        50%  { transform: translateY(-5px); }
         100% { transform: translateY(0px); }
     }
-    .kpi-card {
-        animation: float 6s ease-in-out infinite;
-    }
-    
-    /* Dynamic pulsing for high risk badges */
     @keyframes pulse-red {
-        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-        70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+        0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        70%  { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
         100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
-    .risk-high {
-        animation: pulse-red 2s infinite;
-    }
-
-    .bg-aurora {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: -9999; /* Force to absolute bottom layer */
-        pointer-events: none;
-        overflow: hidden;
-        background-color: #0b1120;
-    }
-    .bg-aurora .blob {
-        position: absolute;
-        width: 48vmax;
-        height: 48vmax;
-        border-radius: 50%;
-        filter: blur(70px);
-        opacity: 0.28;
-        mix-blend-mode: screen;
-    }
-    .bg-aurora .blob-1 {
-        top: -12vmax;
-        left: -8vmax;
-        background: #3b82f6;
-        animation: drift-1 18s ease-in-out infinite alternate;
-    }
-    .bg-aurora .blob-2 {
-        right: -12vmax;
-        bottom: -14vmax;
-        background: #10b981;
-        animation: drift-2 22s ease-in-out infinite alternate;
-    }
-    .bg-aurora .mesh {
-        position: absolute;
-        inset: -20%;
-        opacity: 0.16;
-        background-image:
-            linear-gradient(rgba(148, 163, 184, 0.10) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(148, 163, 184, 0.10) 1px, transparent 1px);
-        background-size: 56px 56px;
-        transform: perspective(700px) rotateX(63deg) translateY(24%);
-        animation: mesh-pan 28s linear infinite;
-    }
-    @keyframes drift-1 {
-        0% { transform: translate3d(0, 0, 0) scale(1); }
-        100% { transform: translate3d(9vmax, 7vmax, 0) scale(1.08); }
-    }
-    @keyframes drift-2 {
-        0% { transform: translate3d(0, 0, 0) scale(1); }
-        100% { transform: translate3d(-8vmax, -6vmax, 0) scale(1.1); }
-    }
-    /* Streamlit Background Override Hack */
-    [data-testid="stAppViewContainer"] {
-        background-color: transparent !important;
-        position: relative;
-        z-index: 1; /* Bring UI to front */
-    }
-    [data-testid="stHeader"] {
-        background-color: transparent !important;
-    }
-    .stApp .main {
-        background-color: transparent !important;
-    }
-    .block-container {
-        position: relative;
-        z-index: 10;
-        background: transparent !important;
-    }
 </style>
-<!-- Render Aurora Background at absolute bottom layer -->
-<div class="bg-aurora">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="mesh"></div>
-</div>
 """, unsafe_allow_html=True)
+
+
+
+# ---- Load background animation ----
+import streamlit.components.v1 as components
+
+_bg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "background.html")
+with open(_bg_path, "r", encoding="utf-8") as _f:
+    _bg_html_content = _f.read()
+
+_bg_wrapper = f"""
+<div style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-9999;pointer-events:none;overflow:hidden;">
+{_bg_html_content}
+</div>
+"""
+components.html(_bg_wrapper, height=0, scrolling=False)
 
 
 # ===================================================================
@@ -389,77 +649,182 @@ except FileNotFoundError:
 
 
 # ===================================================================
-# SIDEBAR NAVIGATION
+# AUTH + QUERY-PARAM ROLE SWITCH + REGISTRATION
 # ===================================================================
+import json
+
+USERS_FILE = os.path.join(base, "data", "users.json")
+
+def load_users():
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, "r") as f:
+            return json.load(f)
+    return {
+        "admin": {"password": "admin", "role": "admin"},
+        "staff": {"password": "staff", "role": "staff"},
+        "teacher": {"password": "teacher", "role": "teacher"},
+    }
+
+def save_users(users_dict):
+    with open(USERS_FILE, "w") as f:
+        json.dump(users_dict, f, indent=4)
+
+USER_ACCOUNTS = load_users()
+
 if "auth" not in st.session_state:
     st.session_state.auth = {"logged_in": False, "username": None, "role": None}
 
-# Render login in main view so auth is accessible even if sidebar is collapsed.
+if "show_register" not in st.session_state:
+    st.session_state.show_register = False
+
+# Handle role switch from top navbar pills via query params
+_qp = st.query_params
+if "switch_role" in _qp and st.session_state.auth.get("logged_in"):
+    _nr = _qp["switch_role"]
+    if _nr in ("admin", "staff"):
+        st.session_state.auth["role"] = _nr
+        st.session_state.auth["username"] = _nr
+    st.query_params.clear()
+    st.rerun()
+
+# ---- Login / Register page (shown when not authenticated) ----
 if not st.session_state.auth["logged_in"]:
-    st.markdown('<div class="main-title">🔐 Sign In</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="main-subtitle">Use your role account to access the dashboard</div>',
-        unsafe_allow_html=True
-    )
-    login_col = st.columns([1, 1, 1])[1]
-    with login_col:
-        username = st.text_input("Username", key="login_username")
-        password = st.text_input("Password", type="password", key="login_password")
-        if st.button("Sign In", use_container_width=True, key="main_signin"):
-            acct = USER_ACCOUNTS.get(username.strip().lower())
-            if acct and password == acct["password"]:
-                st.session_state.auth = {
-                    "logged_in": True,
-                    "username": username.strip().lower(),
-                    "role": acct["role"],
-                }
-                st.success("Login successful")
+    if not st.session_state.show_register:
+        st.markdown('<div class="main-title" style="margin-top:80px;">🔐 Sign In</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="main-subtitle">Use your role account to access the dashboard</div>',
+            unsafe_allow_html=True
+        )
+        login_col = st.columns([1, 1, 1])[1]
+        with login_col:
+            username = st.text_input("Username", key="login_username")
+            password = st.text_input("Password", type="password", key="login_password")
+            if st.button("Sign In", width='stretch', type="primary", key="main_signin"):
+                acct = USER_ACCOUNTS.get(username.strip().lower())
+                if acct and password == acct["password"]:
+                    st.session_state.auth = {
+                        "logged_in": True,
+                        "username": username.strip().lower(),
+                        "role": acct["role"],
+                    }
+                    st.success("Login successful")
+                    st.rerun()
+                else:
+                    st.error("Invalid username or password")
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.caption("Don't have an account yet?")
+            if st.button("Register a new account", width='stretch', key="go_to_register"):
+                st.session_state.show_register = True
                 st.rerun()
-            else:
-                st.error("Invalid username or password")
-        st.caption("Demo users: `admin`, `staff`, `teacher`")
+                
+            st.caption("Demo users: `admin`, `staff`, `teacher`")
+    else:
+        st.markdown('<div class="main-title" style="margin-top:80px;">📝 Register</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="main-subtitle">Create a new account for the Early Warning System</div>',
+            unsafe_allow_html=True
+        )
+        reg_col = st.columns([1, 1, 1])[1]
+        with reg_col:
+            new_user = st.text_input("New Username", key="reg_user").strip().lower()
+            new_pass = st.text_input("New Password", type="password", key="reg_pass")
+            new_role = st.selectbox("Select Role", ["staff", "teacher", "admin"], key="reg_role")
+            
+            if st.button("Create Account", width='stretch', type="primary", key="main_register"):
+                if not new_user or not new_pass:
+                    st.error("Please fill in all fields.")
+                elif new_user in USER_ACCOUNTS:
+                    st.error("Username already exists. Please choose a different one.")
+                else:
+                    USER_ACCOUNTS[new_user] = {"password": new_pass, "role": new_role}
+                    save_users(USER_ACCOUNTS)
+                    st.success(f"Account '{new_user}' created successfully! You can now sign in.")
+                    st.session_state.show_register = False
+                    st.rerun()
+                    
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.caption("Already have an account?")
+            if st.button("Back to Sign In", width='stretch', key="go_to_login"):
+                st.session_state.show_register = False
+                st.rerun()
     st.stop()
 
+# ---- Top Navbar (only when logged in) ----
+_auth = st.session_state.auth
+_cur_role = _auth["role"]
+_admin_active  = 'role-pill role-pill-active'  if _cur_role == 'admin' else 'role-pill role-pill-inactive'
+_staff_active  = 'role-pill role-pill-active'  if _cur_role == 'staff' else 'role-pill role-pill-inactive'
+st.markdown(f"""
+<div id="custom-topnav">
+    <button id="sidebar-toggle" type="button" title="Toggle menu">&#9776;</button>
+    <span id="topnav-logo">🔮 SafePath AI</span>
+    <div id="topnav-right">
+        <span class="topnav-user">👤 {_auth['username']}</span>
+        <a href="?switch_role=admin" target="_self" class="{_admin_active}">Admin</a>
+        <a href="?switch_role=staff" target="_self" class="{_staff_active}">Staff</a>
+        <a href="?logout=1" target="_self" class="topnav-logout" id="logout-btn">⏻ Logout</a>
+    </div>
+</div>
+<script>
+(() => {{
+    const btn = document.getElementById("sidebar-toggle");
+    if (!btn) return;
+
+    const getParentDoc = () => {{
+        try {{
+            return window.parent && window.parent.document ? window.parent.document : document;
+        }} catch (e) {{
+            return document;
+        }}
+    }};
+
+    const toggleSidebar = () => {{
+        const p = getParentDoc();
+        const selectors = [
+            "[data-testid='stSidebarCollapsedControl'] button",
+            ".stSidebarCollapsedControl button",
+            "[data-testid='stSidebarCollapseButton']",
+            "[data-testid='collapsedControl']",
+            "button[aria-label*='sidebar' i]",
+            "button[title*='sidebar' i]"
+        ];
+
+        for (const sel of selectors) {{
+            const el = p.querySelector(sel);
+            if (el) {{
+                el.click();
+                return;
+            }}
+        }}
+    }};
+
+    btn.addEventListener("click", toggleSidebar);
+}})();
+</script>
+""", unsafe_allow_html=True)
+
+# Handle logout query param
+if "logout" in _qp:
+    st.session_state.auth = {"logged_in": False, "username": None, "role": None}
+    st.query_params.clear()
+    st.rerun()
+
+# ===================================================================
+# SIDEBAR NAVIGATION (left menu)
+# ===================================================================
 with st.sidebar:
     st.markdown("""
-    <div style="text-align:center; padding: 10px 0 20px 0;">
-        <div style="font-size: 2.5rem;">🎓</div>
-        <div style="font-size: 1.1rem; font-weight: 700; color: #e2e8f0; margin-top: 5px;">
-            AI Early Warning
-        </div>
-        <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">
-            Student Dropout Risk System
-        </div>
+    <div style="text-align:center; padding: 10px 0 18px 0;">
+        <div style="font-size: 2.2rem;">🔮</div>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-top: 4px; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);">SafePath AI</div>
+        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Student Dropout Risk System</div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("---")
 
-    st.markdown(
-        f"**User:** {st.session_state.auth['username']}  \n"
-        f"**Role:** `{st.session_state.auth['role']}`"
-    )
-    if st.button("Logout", use_container_width=True):
-        st.session_state.auth = {"logged_in": False, "username": None, "role": None}
-        st.rerun()
-
-    st.markdown("---")
-
-    # --- Role Switcher (Top Navigation substitute) ---
-    st.markdown("**Switch User View:**")
-    role_options = ["Admin", "Staff"]
-    current_idx = 0 if st.session_state.auth["role"] == "admin" else 1
-    selected_role_label = st.radio("Access Level", role_options, index=current_idx, horizontal=True, label_visibility="collapsed")
-    new_role = "admin" if selected_role_label == "Admin" else "staff"
-    
-    if new_role != st.session_state.auth["role"]:
-        st.session_state.auth["role"] = new_role
-        st.session_state.auth["username"] = "admin" if new_role == "admin" else "staff"
-        st.rerun()
-
     user_role = st.session_state.auth["role"]
-
-    st.markdown("---")
 
     if user_role == "admin":
         page = st.radio(
@@ -497,7 +862,6 @@ with st.sidebar:
         selected_zone = st.selectbox("Zone", zone_options, index=0)
         filtered_df = all_students_df if selected_zone == "All" else all_students_df[all_students_df["zone"] == selected_zone]
     else:
-        # Staff must pick a zone first
         zone_options = sorted(all_students_df["zone"].dropna().unique().tolist())
         if "staff_zone" not in st.session_state:
             st.session_state.staff_zone = zone_options[0]
@@ -546,6 +910,17 @@ with st.sidebar:
         <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 4px;">
             🕐 {datetime.now().strftime('%d %b %Y, %I:%M %p')}
         </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ---- Sidebar open/close toggle button at bottom ----
+    st.markdown("""
+    <div style="margin-top: 20px; text-align: center;">
+        <button onclick="window.parent.document.querySelector('[data-testid=stSidebarCollapseButton]') && window.parent.document.querySelector('[data-testid=stSidebarCollapseButton]').click()"
+            style="background:rgba(79,139,249,0.08); border:1px solid rgba(79,139,249,0.25);
+                   color:#64748b; border-radius:8px; padding:6px 20px; cursor:pointer; font-size:0.78rem;">
+            ← Close Menu
+        </button>
     </div>
     """, unsafe_allow_html=True)
 
@@ -640,7 +1015,7 @@ if page == "📊 Dashboard":
             margin=dict(t=20, b=20, l=20, r=20),
         )
         fig.update_traces(textinfo="percent+value", textfont_size=13)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
     with col2:
         st.markdown('<div class="section-header">Risk Score Distribution</div>', unsafe_allow_html=True)
@@ -662,7 +1037,7 @@ if page == "📊 Dashboard":
         )
         fig2.update_xaxes(gridcolor="#1e293b")
         fig2.update_yaxes(gridcolor="#1e293b")
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width='stretch')
 
     # Bottom Row
     col3, col4 = st.columns(2)
@@ -687,7 +1062,7 @@ if page == "📊 Dashboard":
         )
         fig3.update_xaxes(gridcolor="#1e293b")
         fig3.update_yaxes(gridcolor="#1e293b")
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3, width='stretch')
 
     with col4:
         st.markdown('<div class="section-header">Risk by Class</div>', unsafe_allow_html=True)
@@ -710,31 +1085,32 @@ if page == "📊 Dashboard":
         )
         fig4.update_xaxes(gridcolor="#1e293b")
         fig4.update_yaxes(gridcolor="#1e293b")
-        st.plotly_chart(fig4, use_container_width=True)
+        st.plotly_chart(fig4, width='stretch')
 
     # High Risk Students Table
     st.markdown('<div class="section-header">🚨 High Risk Students</div>', unsafe_allow_html=True)
-    high_risk_df = students_df[students_df["high_risk_flag"]].sort_values("risk_priority", ascending=False).copy()
-    high_risk_df["phone_link"] = high_risk_df["phone"].apply(lambda p: f"tel:{p}")
-    display_cols = ["student_id", "name", "class", "district", "school", "phone_link", "attendance", "math_score", "risk_score", "risk_priority", "risk_level"]
-    st.dataframe(
-        high_risk_df[display_cols].head(15),
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "student_id": "ID",
-            "name": "Name",
-            "class": "Class",
-            "district": "District",
-            "school": "School",
-            "phone_link": st.column_config.LinkColumn("Phone", display_text="📞 Call"),
-            "attendance": st.column_config.ProgressColumn("Attendance", min_value=0, max_value=100, format="%d%%"),
-            "math_score": st.column_config.ProgressColumn("Math Score", min_value=0, max_value=100, format="%d"),
-            "risk_score": st.column_config.ProgressColumn("Risk Score", min_value=0, max_value=100, format="%.1f"),
-            "risk_priority": st.column_config.ProgressColumn("Priority Score", min_value=0, max_value=100, format="%.1f"),
-            "risk_level": "Risk Level",
-        },
-    )
+    with st.container(border=True):
+        high_risk_df = students_df[students_df["high_risk_flag"]].sort_values("risk_priority", ascending=False).copy()
+        high_risk_df["phone_link"] = high_risk_df["phone"].apply(lambda p: f"tel:{p}")
+        display_cols = ["student_id", "name", "class", "district", "school", "phone_link", "attendance", "math_score", "risk_score", "risk_priority", "risk_level"]
+        st.dataframe(
+            high_risk_df[display_cols].head(15),
+            width='stretch',
+            hide_index=True,
+            column_config={
+                "student_id": "ID",
+                "name": "Name",
+                "class": "Class",
+                "district": "District",
+                "school": "School",
+                "phone_link": st.column_config.LinkColumn("Phone", display_text="📞 Call"),
+                "attendance": st.column_config.ProgressColumn("Attendance", min_value=0, max_value=100, format="%d%%"),
+                "math_score": st.column_config.ProgressColumn("Math Score", min_value=0, max_value=100, format="%d"),
+                "risk_score": st.column_config.ProgressColumn("Risk Score", min_value=0, max_value=100, format="%.1f"),
+                "risk_priority": st.column_config.ProgressColumn("Priority Score", min_value=0, max_value=100, format="%.1f"),
+                "risk_level": "Risk Level",
+            },
+        )
 
 
 # ===================================================================
@@ -802,7 +1178,7 @@ elif page == "🎯 Student Risk Analysis":
             height=280,
             margin=dict(t=50, b=20, l=30, r=30),
         )
-        st.plotly_chart(fig_gauge, use_container_width=True)
+        st.plotly_chart(fig_gauge, width='stretch')
 
     with col_info:
         st.markdown(f"""
@@ -933,120 +1309,124 @@ elif page == "🎯 Student Risk Analysis":
 
     role = st.session_state.auth["role"]
     st.markdown('<div class="section-header">🧾 Student Profile Access</div>', unsafe_allow_html=True)
-    if role == "admin":
-        st.info("Admin view is read-only. Staff/teacher accounts can edit student details.")
-        st.dataframe(
-            pd.DataFrame([{
-                "Phone": student["phone"],
-                "Address": student["address"],
-                "Dropout Reason": student["dropout_reason"],
-                "Attendance": student["attendance"],
-                "Engagement": student["engagement_score"],
-            }]),
-            use_container_width=True,
-            hide_index=True,
-        )
-    else:
-        with st.form("edit_student_details"):
-            e1, e2 = st.columns(2)
-            with e1:
-                edited_phone = st.text_input("Phone", value=str(student["phone"]))
-                edited_reason = st.text_input("Dropout Reason", value=str(student["dropout_reason"]))
-                edited_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=int(student["attendance"]))
-            with e2:
-                edited_address = st.text_area("Address", value=str(student["address"]), height=70)
-                edited_engagement = st.number_input("Engagement Score", min_value=0, max_value=100, value=int(student["engagement_score"]))
-                edited_distance = st.number_input("Distance (km)", min_value=0.0, max_value=30.0, value=float(student["distance_km"]), step=0.1)
+    with st.container(border=True):
+        if role == "admin":
+            st.info("Admin view is read-only. Staff/teacher accounts can edit student details.")
+            st.dataframe(
+                pd.DataFrame([{
+                    "Phone": student["phone"],
+                    "Address": student["address"],
+                    "Dropout Reason": student["dropout_reason"],
+                    "Attendance": student["attendance"],
+                    "Engagement": student["engagement_score"],
+                }]),
+                width='stretch',
+                hide_index=True,
+            )
+        else:
+            with st.form("edit_student_details"):
+                e1, e2 = st.columns(2)
+                with e1:
+                    edited_phone = st.text_input("Phone", value=str(student["phone"]))
+                    edited_reason = st.text_input("Dropout Reason", value=str(student["dropout_reason"]))
+                    edited_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=int(student["attendance"]))
+                with e2:
+                    edited_address = st.text_area("Address", value=str(student["address"]), height=70)
+                    edited_engagement = st.number_input("Engagement Score", min_value=0, max_value=100, value=int(student["engagement_score"]))
+                    edited_distance = st.number_input("Distance (km)", min_value=0.0, max_value=30.0, value=float(student["distance_km"]), step=0.1)
 
-            if st.form_submit_button("Save Student Updates", type="primary", use_container_width=True):
-                csv_path = os.path.join(base, "data", "students.csv")
-                source_df = pd.read_csv(csv_path)
-                source_df = ensure_student_schema(source_df, csv_path)
-                idx = source_df[source_df["student_id"] == selected_id].index
-                if len(idx) == 1:
-                    row_idx = idx[0]
-                    source_df.loc[row_idx, "phone"] = edited_phone.strip()
-                    source_df.loc[row_idx, "address"] = edited_address.strip()
-                    source_df.loc[row_idx, "dropout_reason"] = edited_reason.strip() or "None reported"
-                    source_df.loc[row_idx, "attendance"] = int(edited_attendance)
-                    source_df.loc[row_idx, "engagement_score"] = int(edited_engagement)
-                    source_df.loc[row_idx, "distance_km"] = float(edited_distance)
-                    source_df.to_csv(csv_path, index=False)
-                    st.cache_data.clear()
-                    st.cache_resource.clear()
-                    st.success("Student record updated successfully.")
-                    st.rerun()
-                else:
-                    st.error("Unable to uniquely locate this student in the source dataset.")
+                if st.form_submit_button("Save Student Updates", type="primary", width='stretch'):
+                    csv_path = os.path.join(base, "data", "students.csv")
+                    source_df = pd.read_csv(csv_path)
+                    source_df = ensure_student_schema(source_df, csv_path)
+                    idx = source_df[source_df["student_id"] == selected_id].index
+                    if len(idx) == 1:
+                        row_idx = idx[0]
+                        source_df.loc[row_idx, "phone"] = edited_phone.strip()
+                        source_df.loc[row_idx, "address"] = edited_address.strip()
+                        source_df.loc[row_idx, "dropout_reason"] = edited_reason.strip() or "None reported"
+                        source_df.loc[row_idx, "attendance"] = int(edited_attendance)
+                        source_df.loc[row_idx, "engagement_score"] = int(edited_engagement)
+                        source_df.loc[row_idx, "distance_km"] = float(edited_distance)
+                        source_df.to_csv(csv_path, index=False)
+                        st.cache_data.clear()
+                        st.cache_resource.clear()
+                        st.success("Student record updated successfully.")
+                        st.rerun()
+                    else:
+                        st.error("Unable to uniquely locate this student in the source dataset.")
 
     # Top 3 Contributing Factors
     col_factors, col_cohort = st.columns(2)
 
     with col_factors:
         st.markdown('<div class="section-header">🔍 Top Contributing Factors</div>', unsafe_allow_html=True)
-        top_factors = model.get_top_factors(student_dict, top_n=3)
+        with st.container(border=True):
+            top_factors = model.get_top_factors(student_dict, top_n=3)
 
-        for i, factor in enumerate(top_factors, 1):
-            icon = "⚠️" if factor["is_risk_factor"] else "✅"
-            color = "#ef4444" if factor["is_risk_factor"] else "#10b981"
-            st.markdown(f"""
-            <div style="background: #1e293b; border-radius: 12px; padding: 16px; margin: 8px 0;
-                        border-left: 4px solid {color};">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <span style="font-size: 1.1rem;">{icon}</span>
-                        <span style="color: #e2e8f0; font-weight: 600; margin-left: 8px;">
-                            #{i} {factor['description']}
-                        </span>
+            for i, factor in enumerate(top_factors, 1):
+                icon = "⚠️" if factor["is_risk_factor"] else "✅"
+                color = "#ef4444" if factor["is_risk_factor"] else "#10b981"
+                bg_color = "rgba(15, 23, 42, 0.4)"
+                st.markdown(f"""
+                <div style="background: {bg_color}; border-radius: 12px; padding: 16px; margin: 8px 0;
+                            border-left: 4px solid {color};">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="font-size: 1.1rem;">{icon}</span>
+                            <span style="color: #e2e8f0; font-weight: 600; margin-left: 8px;">
+                                #{i} {factor['description']}
+                            </span>
+                        </div>
+                        <div style="color: {color}; font-weight: 600; font-size: 0.85rem;">
+                            {factor['direction']}
+                        </div>
                     </div>
-                    <div style="color: {color}; font-weight: 600; font-size: 0.85rem;">
-                        {factor['direction']}
+                    <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 6px; margin-left: 32px;">
+                        {factor['label']}: <strong>{factor['value']}</strong> | Model importance: {factor['importance']}%
                     </div>
                 </div>
-                <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 6px; margin-left: 32px;">
-                    {factor['label']}: <strong>{factor['value']}</strong> | Model importance: {factor['importance']}%
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
 
     with col_cohort:
         st.markdown('<div class="section-header">📊 Cohort Comparison</div>', unsafe_allow_html=True)
-        comparison = model.get_cohort_comparison(student_dict, students_df)
+        with st.container(border=True):
+            comparison = model.get_cohort_comparison(student_dict, students_df)
 
-        comp_df = pd.DataFrame(comparison)
-        fig_comp = go.Figure()
+            comp_df = pd.DataFrame(comparison)
+            fig_comp = go.Figure()
 
-        fig_comp.add_trace(go.Bar(
-            name="Student",
-            x=comp_df["indicator"],
-            y=comp_df["student_value"],
-            marker_color="#4F8BF9",
-        ))
-        fig_comp.add_trace(go.Bar(
-            name="Class Average",
-            x=comp_df["indicator"],
-            y=comp_df["class_average"],
-            marker_color="#64748b",
-        ))
-        fig_comp.add_trace(go.Bar(
-            name="Successful Students",
-            x=comp_df["indicator"],
-            y=comp_df["successful_average"],
-            marker_color="#10b981",
-        ))
+            fig_comp.add_trace(go.Bar(
+                name="Student",
+                x=comp_df["indicator"],
+                y=comp_df["student_value"],
+                marker_color="#4F8BF9",
+            ))
+            fig_comp.add_trace(go.Bar(
+                name="Class Average",
+                x=comp_df["indicator"],
+                y=comp_df["class_average"],
+                marker_color="#64748b",
+            ))
+            fig_comp.add_trace(go.Bar(
+                name="Successful Students",
+                x=comp_df["indicator"],
+                y=comp_df["successful_average"],
+                marker_color="#10b981",
+            ))
 
-        fig_comp.update_layout(
-            barmode="group",
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font_color="#e2e8f0",
-            height=320,
-            margin=dict(t=20, b=40, l=40, r=20),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
-        )
-        fig_comp.update_xaxes(gridcolor="#1e293b", tickangle=-30)
-        fig_comp.update_yaxes(gridcolor="#1e293b")
-        st.plotly_chart(fig_comp, use_container_width=True)
+            fig_comp.update_layout(
+                barmode="group",
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#e2e8f0",
+                height=320,
+                margin=dict(t=20, b=40, l=40, r=20),
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+            )
+            fig_comp.update_xaxes(gridcolor="#1e293b", tickangle=-30)
+            fig_comp.update_yaxes(gridcolor="#1e293b")
+            st.plotly_chart(fig_comp, width='stretch')
 
 
 # ===================================================================
@@ -1147,7 +1527,7 @@ elif page == "💬 Parent Communication":
         default=concerns,
     )
 
-    if st.button("📝 Generate Message", type="primary", use_container_width=True):
+    if st.button("📝 Generate Message", type="primary", width='stretch'):
         lang = "tamil" if language == "Tamil" else "english"
 
         if msg_type == "Formal Letter":
@@ -1199,7 +1579,7 @@ elif page == "🏛️ Government Schemes":
     selected_id = int(selected.split(" — ")[0])
     student = students_df[students_df["student_id"] == selected_id].iloc[0]
 
-    if st.button("🔍 Check Eligibility", type="primary", use_container_width=True):
+    if st.button("🔍 Check Eligibility", type="primary", width='stretch'):
         matched = match_schemes(student, schemes_df)
 
         if not matched:
@@ -1315,81 +1695,85 @@ elif page == "🗺️ District Heatmap":
     
     col_map, col_tree = st.columns(2)
     with col_map:
-        st.plotly_chart(fig_map, use_container_width=True)
+        with st.container(border=True):
+            st.plotly_chart(fig_map, width='stretch')
     
     with col_tree:
-
-        fig_heat = px.treemap(
-            school_stats,
-            path=["school_short"],
-            values="total_students",
-            color="avg_risk_score",
-            color_continuous_scale=["#10b981", "#f59e0b", "#ef4444"],
-            hover_data=["total_students", "high_risk", "avg_attendance"],
-        )
-        fig_heat.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
-            font_color="#e2e8f0",
-            height=450,
-            margin=dict(t=0, b=0, l=0, r=0),
-            coloraxis_colorbar_title="Avg Risk",
-        )
-        st.plotly_chart(fig_heat, use_container_width=True)
+        with st.container(border=True):
+            fig_heat = px.treemap(
+                school_stats,
+                path=["school_short"],
+                values="total_students",
+                color="avg_risk_score",
+                color_continuous_scale=["#10b981", "#f59e0b", "#ef4444"],
+                hover_data=["total_students", "high_risk", "avg_attendance"],
+            )
+            fig_heat.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                font_color="#e2e8f0",
+                height=450,
+                margin=dict(t=0, b=0, l=0, r=0),
+                coloraxis_colorbar_title="Avg Risk",
+            )
+            st.plotly_chart(fig_heat, width='stretch')
 
     # Bar chart
     col1, col2 = st.columns(2)
 
     with col1:
         st.markdown('<div class="section-header">High Risk Students by School</div>', unsafe_allow_html=True)
-        fig_bar = px.bar(
-            school_stats,
-            x="school_short",
-            y=["high_risk", "medium_risk"],
-            barmode="stack",
-            color_discrete_sequence=["#ef4444", "#f59e0b"],
-            labels={"value": "Students", "school_short": "School"},
-        )
-        fig_bar.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font_color="#e2e8f0",
-            height=350,
-            margin=dict(t=20, b=60, l=40, r=20),
-            legend_title="Risk Level",
-        )
-        fig_bar.update_xaxes(gridcolor="#1e293b", tickangle=-45)
-        fig_bar.update_yaxes(gridcolor="#1e293b")
-        st.plotly_chart(fig_bar, use_container_width=True)
+        with st.container(border=True):
+            fig_bar = px.bar(
+                school_stats,
+                x="school_short",
+                y=["high_risk", "medium_risk"],
+                barmode="stack",
+                color_discrete_sequence=["#ef4444", "#f59e0b"],
+                labels={"value": "Students", "school_short": "School"},
+            )
+            fig_bar.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#e2e8f0",
+                height=350,
+                margin=dict(t=20, b=60, l=40, r=20),
+                legend_title="Risk Level",
+            )
+            fig_bar.update_xaxes(gridcolor="#1e293b", tickangle=-45)
+            fig_bar.update_yaxes(gridcolor="#1e293b")
+            st.plotly_chart(fig_bar, width='stretch')
 
     with col2:
         st.markdown('<div class="section-header">Average Attendance by School</div>', unsafe_allow_html=True)
-        fig_att = px.bar(
-            school_stats.sort_values("avg_attendance"),
-            x="school_short",
-            y="avg_attendance",
-            color="avg_attendance",
-            color_continuous_scale=["#ef4444", "#f59e0b", "#10b981"],
-            labels={"avg_attendance": "Avg Attendance %", "school_short": "School"},
-        )
-        fig_att.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font_color="#e2e8f0",
-            height=350,
-            margin=dict(t=20, b=60, l=40, r=20),
-        )
-        fig_att.update_xaxes(gridcolor="#1e293b", tickangle=-45)
-        fig_att.update_yaxes(gridcolor="#1e293b")
-        st.plotly_chart(fig_att, use_container_width=True)
+        with st.container(border=True):
+            fig_att = px.bar(
+                school_stats.sort_values("avg_attendance"),
+                x="school_short",
+                y="avg_attendance",
+                color="avg_attendance",
+                color_continuous_scale=["#ef4444", "#f59e0b", "#10b981"],
+                labels={"avg_attendance": "Avg Attendance %", "school_short": "School"},
+            )
+            fig_att.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font_color="#e2e8f0",
+                height=350,
+                margin=dict(t=20, b=60, l=40, r=20),
+            )
+            fig_att.update_xaxes(gridcolor="#1e293b", tickangle=-45)
+            fig_att.update_yaxes(gridcolor="#1e293b")
+            st.plotly_chart(fig_att, width='stretch')
 
     # Detailed table
     st.markdown('<div class="section-header">📊 Detailed School Statistics</div>', unsafe_allow_html=True)
-    display_stats = school_stats[["school_short", "total_students", "high_risk", "medium_risk", "risk_pct", "avg_attendance", "avg_math"]].copy()
-    display_stats.columns = ["School", "Total Students", "High Risk", "Medium Risk", "Risk %", "Avg Attendance", "Avg Math"]
-    display_stats["Avg Attendance"] = display_stats["Avg Attendance"].round(1)
-    display_stats["Avg Math"] = display_stats["Avg Math"].round(1)
+    with st.container(border=True):
+        display_stats = school_stats[["school_short", "total_students", "high_risk", "medium_risk", "risk_pct", "avg_attendance", "avg_math"]].copy()
+        display_stats.columns = ["School", "Total Students", "High Risk", "Medium Risk", "Risk %", "Avg Attendance", "Avg Math"]
+        display_stats["Avg Attendance"] = display_stats["Avg Attendance"].round(1)
+        display_stats["Avg Math"] = display_stats["Avg Math"].round(1)
 
-    st.dataframe(display_stats, use_container_width=True, hide_index=True)
+        st.dataframe(display_stats, width='stretch', hide_index=True)
 
 
 # ===================================================================
@@ -1404,7 +1788,7 @@ elif page == "📈 Intervention Tracker":
 
     if not effectiveness.empty:
         st.markdown('<div class="section-header">📊 Intervention Effectiveness Summary</div>', unsafe_allow_html=True)
-        st.dataframe(effectiveness, use_container_width=True, hide_index=True)
+        st.dataframe(effectiveness, width='stretch', hide_index=True)
 
         # Effectiveness chart
         col1, col2 = st.columns(2)
@@ -1429,7 +1813,7 @@ elif page == "📈 Intervention Tracker":
             )
             fig_eff.update_xaxes(gridcolor="#1e293b", tickangle=-45)
             fig_eff.update_yaxes(gridcolor="#1e293b")
-            st.plotly_chart(fig_eff, use_container_width=True)
+            st.plotly_chart(fig_eff, width='stretch')
 
         with col2:
             st.markdown('<div class="section-header">Math Score Change by Intervention</div>', unsafe_allow_html=True)
@@ -1451,7 +1835,7 @@ elif page == "📈 Intervention Tracker":
             )
             fig_math.update_xaxes(gridcolor="#1e293b", tickangle=-45)
             fig_math.update_yaxes(gridcolor="#1e293b")
-            st.plotly_chart(fig_math, use_container_width=True)
+            st.plotly_chart(fig_math, width='stretch')
 
         # Gamified Staff Leaderboard
         st.markdown('<div class="section-header">🏆 Top Impact Leaders (Schools)</div>', unsafe_allow_html=True)
@@ -1514,7 +1898,7 @@ elif page == "📈 Intervention Tracker":
             att_after = st.number_input("Attendance After (%)", 0, 100, 65)
             math_after = st.number_input("Math Score After", 0, 100, 55)
 
-        submitted = st.form_submit_button("💾 Log Intervention", type="primary", use_container_width=True)
+        submitted = st.form_submit_button("💾 Log Intervention", type="primary", width='stretch')
 
         if submitted:
             log_id = int(log_student.split(" — ")[0])
@@ -1562,7 +1946,7 @@ elif page == "📈 Intervention Tracker":
     display_recent.columns = ["Date", "Student", "Intervention", "Att Before", "Att After",
                                "Att Change", "Math Before", "Math After", "Math Change"]
 
-    st.dataframe(display_recent, use_container_width=True, hide_index=True)
+    st.dataframe(display_recent, width='stretch', hide_index=True)
 
 
 # ===================================================================
@@ -1639,7 +2023,7 @@ elif page == "📝 Student Data Entry":
                     edited_distance = st.number_input("Distance (km)", min_value=0.0, max_value=30.0, value=float(student["distance_km"]), step=0.1)
                     edited_science = st.number_input("Science Score", min_value=0, max_value=100, value=int(student["science_score"]))
 
-                if st.form_submit_button("💾 Save Changes", type="primary", use_container_width=True):
+                if st.form_submit_button("💾 Save Changes", type="primary", width='stretch'):
                     csv_path = os.path.join(base, "data", "students.csv")
                     source_df = pd.read_csv(csv_path)
                     source_df = ensure_student_schema(source_df, csv_path)
@@ -1672,19 +2056,21 @@ elif page == "📝 Student Data Entry":
                 new_class = st.selectbox("Class", [6, 7, 8, 9, 10])
                 new_section = st.selectbox("Section", ["A", "B", "C"])
                 new_phone = st.text_input("Phone Number")
-                new_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=80)
-                new_math = st.number_input("Math Score", min_value=0, max_value=100, value=50)
+                # Defaults set to trigger 'High Risk' for hackathon demo
+                new_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=45)
+                new_math = st.number_input("Math Score", min_value=0, max_value=100, value=30)
                 new_location = st.selectbox("Location Type", ["City", "Village"])
             with n2:
                 new_address = st.text_area("Address", height=70)
                 new_income = st.selectbox("Family Income", ["low", "medium", "high"])
                 new_parent_edu = st.selectbox("Parent Education", ["none", "primary", "secondary", "graduate"])
-                new_distance = st.number_input("Distance (km)", min_value=0.0, max_value=30.0, value=2.0, step=0.1)
-                new_sibling = st.selectbox("Sibling Dropout", ["no", "yes"])
-                new_science = st.number_input("Science Score", min_value=0, max_value=100, value=50)
-                new_language = st.number_input("Language Score", min_value=0, max_value=100, value=50)
+                new_distance = st.number_input("Distance (km)", min_value=0.0, max_value=30.0, value=9.0, step=0.1)
+                new_sibling = st.selectbox("Sibling Dropout", ["no", "yes"], index=1)
+                new_science = st.number_input("Science Score", min_value=0, max_value=100, value=30)
+                new_language = st.number_input("Language Score", min_value=0, max_value=100, value=30)
+                new_engagement = st.number_input("Engagement Score", min_value=0, max_value=100, value=40)
 
-            if st.form_submit_button("➕ Add Student", type="primary", use_container_width=True):
+            if st.form_submit_button("➕ Add Student", type="primary", width='stretch'):
                 if not new_name.strip():
                     st.error("Student name is required.")
                 else:
@@ -1713,7 +2099,7 @@ elif page == "📝 Student Data Entry":
                         "sibling_dropout": new_sibling,
                         "family_income": new_income,
                         "parent_education": new_parent_edu,
-                        "engagement_score": 70,
+                        "engagement_score": int(new_engagement),
                         "dropout_reason": "None reported",
                         "dropout_risk": 0,
                     }

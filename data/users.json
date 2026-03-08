@@ -1,0 +1,18 @@
+{
+    "admin": {
+        "password": "admin",
+        "role": "admin"
+    },
+    "staff": {
+        "password": "staff",
+        "role": "staff"
+    },
+    "teacher": {
+        "password": "teacher",
+        "role": "teacher"
+    },
+    "demo_user": {
+        "password": "demo123",
+        "role": "staff"
+    }
+}
