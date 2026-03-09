@@ -18,10 +18,11 @@ An intelligent early warning system that predicts which government school studen
 
 ## ⚙️ Tech Stack
 
-- **Backend**: Python, Scikit-learn (RandomForestClassifier)
-- **Frontend**: Streamlit (multi-page dashboard)
+- **Backend**: Python, Scikit-learn (Neural Network Model)
+- **Frontend**: Streamlit (Premium Luxe UI)
+- **Database**: PostgreSQL (Supabase/Local)
+- **Deployment**: Vercel & Cloud Integration
 - **Visualization**: Plotly
-- **Data**: CSV (mock dataset of 2000 students)
 
 ## 📦 Setup & Run
 
@@ -29,10 +30,14 @@ An intelligent early warning system that predicts which government school studen
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Generate dataset
-python generate_data.py
+# 2. Setup PostgreSQL Database
+# Run create_db.py to initialize schema and seed data
+python create_db.py
 
-# 3. Run the application
+# 3. Configure Environment Variables
+# Create a .env file with your DATABASE_URL
+
+# 4. Run the application
 streamlit run app.py
 ```
 
@@ -67,10 +72,10 @@ Student warning/
 
 ## 🤖 How the AI Model Works
 
-1. **RandomForestClassifier** trained on 10 student features
+1. **Neural Network Multi-layer Perceptron** trained on 10 student features for better accuracy
 2. **Explainability**: Feature importance shows which factors contribute most
 3. **Risk Score**: 0–100 scale (Low < 35 < Medium < 60 < High)
-4. **Top 3 Factors**: Each student gets personalized risk factor explanations
+4. **Top 3 Factors**: Each student gets personalized risk factor explanations via the AI model
 
 ## 🛡️ Sensitivity Guardrails
 
