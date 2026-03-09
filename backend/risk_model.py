@@ -5,14 +5,15 @@ Uses RandomForestClassifier with explainability features.
 
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score, classification_report
 
 
 class DropoutRiskModel:
-    """Explainable dropout risk prediction model."""
+    """Explainable neural network dropout risk prediction model."""
 
     FEATURE_COLS = [
         "attendance", "math_score", "science_score", "language_score",
@@ -35,9 +36,15 @@ class DropoutRiskModel:
     }
 
     def __init__(self):
-        self.model = RandomForestClassifier(
-            n_estimators=100, max_depth=10, random_state=42, class_weight="balanced"
+        # Using a Multi-Layer Perceptron (Neural Network)
+        self.model = MLPClassifier(
+            hidden_layer_sizes=(64, 32),
+            activation='relu',
+            solver='adam',
+            max_iter=1000,
+            random_state=42
         )
+        self.scaler = StandardScaler()
         self.encoders = {}
         self.is_trained = False
         self.accuracy = 0.0
@@ -71,7 +78,7 @@ class DropoutRiskModel:
         return df
 
     def train(self, df):
-        """Train the model on student data."""
+        """Train the neural network on student data."""
         df = self._encode_data(df)
 
         X = df[self.FEATURE_COLS]
@@ -81,22 +88,28 @@ class DropoutRiskModel:
             X, y, test_size=0.2, random_state=42, stratify=y
         )
 
-        self.model.fit(X_train, y_train)
+        # Scale features for the Neural Network
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        X_test_scaled = self.scaler.transform(X_test)
+
+        self.model.fit(X_train_scaled, y_train)
         self.is_trained = True
 
-        y_pred = self.model.predict(X_test)
+        y_pred = self.model.predict(X_test_scaled)
         self.accuracy = accuracy_score(y_test, y_pred)
 
-        # Store feature importances
-        importances = self.model.feature_importances_
+        # Heuristic for feature importance in MLP:
+        # Sum of absolute weights from the first layer for each input
+        raw_importances = np.sum(np.abs(self.model.coefs_[0]), axis=1)
+        importances = raw_importances / np.sum(raw_importances)
         self.feature_importances = dict(zip(self.FEATURE_COLS, importances))
 
         return self.accuracy
 
     def predict_risk(self, student_data):
         """
-        Predict dropout risk for a single student.
-        Returns risk_score (0-100) and top factors.
+        Predict dropout risk for a single student using the Neural Network.
+        Returns risk_score (0-100).
         """
         if not self.is_trained:
             raise ValueError("Model not trained yet. Call train() first.")
@@ -112,7 +125,9 @@ class DropoutRiskModel:
                 student_data[col] = 0
 
         X = student_data[self.FEATURE_COLS]
-        risk_prob = self.model.predict_proba(X)[0]
+        X_scaled = self.scaler.transform(X)
+        
+        risk_prob = self.model.predict_proba(X_scaled)[0]
 
         # Index 1 = probability of dropout
         risk_score = round(risk_prob[1] * 100, 1) if len(risk_prob) > 1 else round(risk_prob[0] * 100, 1)
@@ -120,7 +135,7 @@ class DropoutRiskModel:
         return risk_score
 
     def predict_batch(self, df):
-        """Predict risk for all students in a DataFrame."""
+        """Predict risk for all students in a DataFrame using the Neural Network."""
         if not self.is_trained:
             raise ValueError("Model not trained yet.")
 
@@ -131,7 +146,9 @@ class DropoutRiskModel:
                 df[col] = 0
 
         X = df[self.FEATURE_COLS]
-        probs = self.model.predict_proba(X)
+        X_scaled = self.scaler.transform(X)
+        
+        probs = self.model.predict_proba(X_scaled)
 
         risk_scores = []
         for prob in probs:

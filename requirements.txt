@@ -3,3 +3,6 @@ pandas==2.2.3
 scikit-learn==1.6.1
 plotly==6.0.1
 numpy==2.2.3
+sqlalchemy==2.0.48
+psycopg2-binary==2.9.11
+python-dotenv==1.2.2
