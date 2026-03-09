@@ -46,10 +46,3 @@ def migrate():
 
 if __name__ == "__main__":
     migrate()
-Line:3,TargetContent:- [x] Upgrade ML model to Neural Network (MLP)
-- [x] Update requirements.txt for deployment
-- [x] Create deployment script
-- [x] Plan Vercel hosting
-- [x] Set up `vercel.json`
-- [x] Create serverless entry point `api/index.py`
-- [ ] Migrate to Cloud Database

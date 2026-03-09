@@ -141,7 +141,68 @@ st.markdown("""
     }
     ::-webkit-scrollbar-thumb:hover {
         background: rgba(139, 92, 246, 0.8); 
-        box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+    }
+
+    /* ===================================================================
+       SIDEBAR GLASSMORPHISM
+       =================================================================== */
+    [data-testid="stSidebar"] {
+        background: rgba(15, 23, 42, 0.7) !important;
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+        background: transparent !important;
+    }
+
+    [data-testid="stSidebarNav"] {
+        background: transparent !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Active Link Styling */
+    section[data-testid="stSidebar"] .st-emotion-cache-17l683z.e1nzilvr4 {
+        background-color: rgba(139, 92, 246, 0.15) !important;
+        border-left: 3px solid #c084fc !important;
+        color: #ffffff !important;
+    }
+
+    /* ===================================================================
+       MODERN CHAT BUBBLES
+       =================================================================== */
+    .stChatMessage {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    .chat-bubble {
+        padding: 14px 18px;
+        border-radius: 18px;
+        margin-bottom: 12px;
+        max-width: 85%;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        position: relative;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .user-bubble {
+        background: linear-gradient(135deg, #8b5cf6, #d946ef);
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+    }
+
+    .assistant-bubble {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(10px);
+        color: #e2e8f0;
+        margin-right: auto;
+        border-bottom-left-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     /* ---- Top Navbar ---- */
@@ -817,6 +878,7 @@ with st.sidebar:
                 "🗺️ District Heatmap",
                 "📈 Intervention Tracker",
                 "🤖 AI Chatbot",
+                "🔮 Risk Simulator",
             ],
             label_visibility="collapsed",
         )
@@ -829,6 +891,7 @@ with st.sidebar:
                 "📋 Intervention Playbook",
                 "💬 Parent Communication",
                 "🤖 AI Chatbot",
+                "🔮 Risk Simulator",
             ],
             label_visibility="collapsed",
         )
@@ -2019,8 +2082,18 @@ elif page == "🤖 AI Chatbot":
         ]
 
     for msg in st.session_state.chat_history:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+        role_class = "user-bubble" if msg["role"] == "user" else "assistant-bubble"
+        align = "flex-end" if msg["role"] == "user" else "flex-start"
+        icon = "👤" if msg["role"] == "user" else "🤖"
+        
+        st.markdown(f"""
+        <div style="display: flex; flex-direction: column; align-items: {align}; margin-bottom: 10px;">
+            <div style="font-size: 0.7rem; color: #94a3b8; margin: 0 10px 4px 10px;">{icon} {msg['role'].upper()}</div>
+            <div class="chat-bubble {role_class}">
+                {msg['content'].replace('\n', '<br>')}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     prompt = st.chat_input("Type your question...")
     if prompt:
@@ -2031,8 +2104,78 @@ elif page == "🤖 AI Chatbot":
         # For chatbot, pass all_students_df for zone-level queries
         response = generate_chatbot_response(prompt, all_students_df, selected_student=selected_student)
         st.session_state.chat_history.append({"role": "assistant", "content": response})
-        with st.chat_message("assistant"):
-            st.markdown(response)
+        st.rerun()
+
+
+# ===================================================================
+# PAGE: RISK SIMULATOR
+# ===================================================================
+elif page == "🔮 Risk Simulator":
+    st.markdown('<div class="main-title">🔮 Dropout Risk Simulator</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-subtitle">Manually adjust student parameters to see how risk levels shift in real-time.</div>', unsafe_allow_html=True)
+
+    with st.container(border=True):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("##### 📚 Academic Performance")
+            s_math = st.slider("Math Score", 0, 100, 50)
+            s_science = st.slider("Science Score", 0, 100, 50)
+            s_lang = st.slider("Language Score", 0, 100, 50)
+            s_eng = st.slider("Engagement Score", 0, 100, 60)
+            
+        with col2:
+            st.markdown("##### 🏠 Socio-Economic Factors")
+            s_att = st.slider("Attendance %", 0, 100, 85)
+            s_dist = st.slider("Distance (km)", 0.0, 20.0, 2.0)
+            s_inc = st.selectbox("Family Income", ["low", "medium", "high"], index=1)
+            s_pedu = st.selectbox("Parent Education", ["none", "primary", "secondary", "graduate"], index=2)
+            s_sib = st.selectbox("Sibling Dropped Out?", ["no", "yes"], index=0)
+
+    if st.button("🔮 Simulate Risk Score", type="primary", use_container_width=True):
+        sim_data = {
+            "attendance": s_att,
+            "math_score": s_math,
+            "science_score": s_science,
+            "language_score": s_lang,
+            "distance_km": s_dist,
+            "engagement_score": s_eng,
+            "family_income": s_inc,
+            "parent_education": s_pedu,
+            "sibling_dropout": s_sib,
+            "meal_participation": "yes"
+        }
+        
+        risk_score = model.predict_risk(sim_data)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        res_col1, res_col2 = st.columns([1, 2])
+        
+        with res_col1:
+            level = "Low" if risk_score < 35 else ("Medium" if risk_score < 60 else "High")
+            st.markdown(kpi_card("Simulated Risk", f"{risk_score}%", icon="🎯"), unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align:center; margin-top:10px;'>{risk_badge(level)}</div>", unsafe_allow_html=True)
+            
+        with res_col2:
+            st.markdown("##### 💡 Simulation Insights")
+            if risk_score > 60:
+                st.error("High risk detected. Priority intervention recommended.")
+                st.info("Try increasing the **Attendance** or **Math Score** to see how the risk drops.")
+            elif risk_score > 35:
+                st.warning("Moderate risk. Monitor academic progress closely.")
+            else:
+                st.success("Low risk. Student is currently on a stable path.")
+
+            # Factor Analysis
+            factors = model.get_top_factors(sim_data, top_n=2)
+            for f in factors:
+                color = "#ef4444" if f['is_risk_factor'] else "#10b981"
+                st.markdown(f"""
+                <div style="padding:10px; background:rgba(15,23,42,0.4); border-radius:8px; border-left:4px solid {color}; margin-bottom:8px;">
+                    <span style="font-weight:600; color:#f8fafc;">{f['label']}</span>: {f['description']}
+                </div>
+                """, unsafe_allow_html=True)
 
 
 # ===================================================================
@@ -2161,36 +2304,3 @@ elif page == "📝 Student Data Entry":
                         st.rerun()
                     except Exception as e:
                         st.error(f"Error adding student to database: {e}")
-                    new_id = int(source_df["student_id"].max()) + 1
-                    new_row = {
-                        "student_id": new_id,
-                        "name": new_name.strip(),
-                        "gender": new_gender,
-                        "class": new_class,
-                        "section": new_section,
-                        "school": selected_school if selected_school else "Unknown",
-                        "zone": st.session_state.get("staff_zone", "North Zone"),
-                        "district": st.session_state.get("staff_district", "Chennai"),
-                        "location_type": new_location,
-                        "state": "Tamil Nadu",
-                        "phone": new_phone.strip() or "+91-00000-00000",
-                        "address": new_address.strip() or "Address not available",
-                        "attendance": int(new_attendance),
-                        "math_score": int(new_math),
-                        "science_score": int(new_science),
-                        "language_score": int(new_language),
-                        "meal_participation": "yes",
-                        "distance_km": float(new_distance),
-                        "sibling_dropout": new_sibling,
-                        "family_income": new_income,
-                        "parent_education": new_parent_edu,
-                        "engagement_score": int(new_engagement),
-                        "dropout_reason": "None reported",
-                        "dropout_risk": 0,
-                    }
-                    source_df = pd.concat([source_df, pd.DataFrame([new_row])], ignore_index=True)
-                    source_df.to_csv(csv_path, index=False)
-                    st.cache_data.clear()
-                    st.cache_resource.clear()
-                    st.success(f"✅ Student **{new_name}** added with ID {new_id}!")
-                    st.rerun()
