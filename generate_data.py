@@ -430,4 +430,19 @@ if __name__ == "__main__":
     schemes.to_csv("data/schemes.csv", index=False)
     print(f"  → data/schemes.csv  ({len(schemes)} rows)")
 
+    try:
+        import sqlalchemy
+        from dotenv import load_dotenv
+        load_dotenv()
+        db_url = os.getenv("DATABASE_URL")
+        if db_url:
+            print("\nWriting directly to PostgreSQL database...")
+            engine = sqlalchemy.create_engine(db_url)
+            students.to_sql("students", con=engine, if_exists="replace", index=False)
+            interventions.to_sql("interventions", con=engine, if_exists="replace", index=False)
+            schemes.to_sql("schemes", con=engine, if_exists="replace", index=False)
+            print("  → Database tables updated.")
+    except Exception as e:
+        print(f"\nSkipped database write (is PostgreSQL running?): {e}")
+
     print("\n✅ All datasets generated successfully!")

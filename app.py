@@ -136,12 +136,12 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.2); 
     }
     ::-webkit-scrollbar-thumb {
-        background: rgba(79, 139, 249, 0.4); 
+        background: rgba(217, 70, 239, 0.4); 
         border-radius: 10px;
     }
     ::-webkit-scrollbar-thumb:hover {
-        background: rgba(56, 189, 248, 0.8); 
-        box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        background: rgba(139, 92, 246, 0.8); 
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
     }
 
     /* ---- Top Navbar ---- */
@@ -158,14 +158,14 @@ st.markdown("""
         background: rgba(6, 11, 23, 0.82);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(79, 139, 249, 0.18);
+        border-bottom: 1px solid rgba(217, 70, 239, 0.18);
         box-shadow: 0 2px 20px rgba(0,0,0,0.35);
     }
     #sidebar-toggle {
         background: none;
         border: 1px solid rgba(79,139,249,0.3);
         border-radius: 8px;
-        color: #4F8BF9;
+        color: #d946ef;
         font-size: 1.15rem;
         width: 36px; height: 36px;
         cursor: pointer;
@@ -180,13 +180,13 @@ st.markdown("""
     #topnav-logo {
         font-size: 1.25rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #ffffff 0%, #38bdf8 60%, #818cf8 100%);
+        background: linear-gradient(135deg, #ffffff 0%, #d946ef 60%, #8b5cf6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         white-space: nowrap;
         flex: 1;
         letter-spacing: 0.5px;
-        text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        text-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
     }
     #topnav-right {
         display: flex;
@@ -213,10 +213,10 @@ st.markdown("""
         letter-spacing: 0.3px;
     }
     .role-pill-active {
-        background: linear-gradient(135deg, #4F8BF9, #38bdf8);
+        background: linear-gradient(135deg, #d946ef, #8b5cf6);
         color: white;
         border-color: transparent;
-        box-shadow: 0 4px 12px rgba(79, 139, 249, 0.4);
+        box-shadow: 0 4px 12px rgba(217, 70, 239, 0.4);
     }
     .role-pill-inactive {
         background: rgba(30, 41, 59, 0.5);
@@ -224,9 +224,9 @@ st.markdown("""
         border-color: rgba(79,139,249,0.3);
     }
     .role-pill-inactive:hover {
-        border-color: rgba(56, 189, 248, 0.8);
+        border-color: rgba(139, 92, 246, 0.8);
         color: #ffffff;
-        box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
     }
     .topnav-logout {
         padding: 5px 14px;
@@ -280,14 +280,14 @@ st.markdown("""
     }
     /* Hover highlight for rows */
     [data-testid="stDataFrame"] tr:hover td {
-        background-color: rgba(79, 139, 249, 0.15) !important;
+        background-color: rgba(217, 70, 239, 0.15) !important;
     }
     /* Header specific styles */
     [data-testid="stDataFrame"] th {
         background-color: rgba(30, 41, 59, 0.8) !important;
         font-weight: 600 !important;
         color: #f8fafc !important;
-        border-bottom: 2px solid rgba(79, 139, 249, 0.3) !important;
+        border-bottom: 2px solid rgba(217, 70, 239, 0.3) !important;
     }
     /* Attempt to hide row index numbers if they render as th */
     [data-testid="stDataFrame"] th:first-child, [data-testid="stDataFrame"] td:first-child {
@@ -305,14 +305,14 @@ st.markdown("""
         background: rgba(15, 23, 42, 0.45) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
-        border: 1px solid rgba(79, 139, 249, 0.2) !important;
+        border: 1px solid rgba(217, 70, 239, 0.2) !important;
         border-radius: 16px !important;
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     [data-testid="stVerticalBlockBorderWrapper"]:hover > div {
-        box-shadow: 0 12px 40px 0 rgba(79, 139, 249, 0.15) !important;
-        border-color: rgba(79, 139, 249, 0.4) !important;
+        box-shadow: 0 12px 40px 0 rgba(217, 70, 239, 0.15) !important;
+        border-color: rgba(217, 70, 239, 0.4) !important;
     }
 
     /* ---- Premium Inputs (Text, Number, Selectbox) ---- */
@@ -328,8 +328,8 @@ st.markdown("""
     .stTextInput > div > div > input:focus,
     .stNumberInput > div > div > input:focus,
     .stSelectbox > div > div > div:focus {
-        border-color: #4F8BF9 !important;
-        box-shadow: 0 0 0 2px rgba(79, 139, 249, 0.25) !important;
+        border-color: #d946ef !important;
+        box-shadow: 0 0 0 2px rgba(217, 70, 239, 0.25) !important;
         background-color: rgba(15, 23, 42, 0.8) !important;
     }
     /* Fix selectbox dropdown arrow area */
@@ -340,19 +340,19 @@ st.markdown("""
     /* ---- Premium Buttons ---- */
     /* Primary Button */
     button[kind="primary"] {
-        background: linear-gradient(135deg, #4F8BF9 0%, #38bdf8 100%) !important;
+        background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%) !important;
         color: #ffffff !important;
         border: none !important;
         border-radius: 12px !important;
         font-weight: 600 !important;
         letter-spacing: 0.5px !important;
         padding: 0.5rem 1rem !important;
-        box-shadow: 0 4px 14px 0 rgba(79, 139, 249, 0.39) !important;
+        box-shadow: 0 4px 14px 0 rgba(217, 70, 239, 0.39) !important;
         transition: all 0.3s ease !important;
     }
     button[kind="primary"]:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(79, 139, 249, 0.6) !important;
+        box-shadow: 0 6px 20px rgba(217, 70, 239, 0.6) !important;
     }
     button[kind="primary"]:active {
         transform: translateY(0) !important;
@@ -369,10 +369,10 @@ st.markdown("""
     }
     button[kind="secondary"]:hover {
         background: rgba(47, 63, 86, 0.8) !important;
-        border-color: rgba(56, 189, 248, 0.8) !important;
+        border-color: rgba(139, 92, 246, 0.8) !important;
         color: #ffffff !important;
         transform: translateY(-1px) !important;
-        box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important;
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.2) !important;
     }
 
     /* ---- Mobile Responsiveness ---- */
@@ -413,9 +413,9 @@ st.markdown("""
         background-color: rgba(255, 255, 255, 0.05) !important;
     }
     .stTabs [aria-selected="true"] {
-        background-color: rgba(79, 139, 249, 0.15) !important;
-        color: #4F8BF9 !important;
-        border: 1px solid rgba(79, 139, 249, 0.3) !important;
+        background-color: rgba(217, 70, 239, 0.15) !important;
+        color: #d946ef !important;
+        border: 1px solid rgba(217, 70, 239, 0.3) !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
     }
     /* Hide the active tab underline indicator */
@@ -427,7 +427,7 @@ st.markdown("""
     .kpi-card {
         background: rgba(15, 23, 42, 0.45);
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(79, 139, 249, 0.15);
+        border: 1px solid rgba(217, 70, 239, 0.15);
         border-radius: 16px;
         padding: 24px;
         text-align: center;
@@ -435,18 +435,18 @@ st.markdown("""
         box-shadow: 0 4px 16px rgba(0,0,0,0.2);
     }
     .kpi-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(79, 139, 249, 0.25);
-        border-color: rgba(79, 139, 249, 0.4);
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 12px 28px rgba(217, 70, 239, 0.25);
+        border-color: rgba(217, 70, 239, 0.4);
     }
     .kpi-value {
         font-size: 2.6rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 100%);
+        background: linear-gradient(135deg, #c084fc 0%, #f472b6 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 8px 0;
-        text-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
+        text-shadow: 0 2px 10px rgba(139, 92, 246, 0.2);
     }
     .kpi-label {
         color: #cbd5e1;
@@ -479,7 +479,7 @@ st.markdown("""
     .section-header {
         font-size: 1.4rem; font-weight: 600; color: #f8fafc;
         margin: 24px 0 16px 0; padding-bottom: 8px;
-        border-bottom: 1px solid rgba(79, 139, 249, 0.2);
+        border-bottom: 1px solid rgba(217, 70, 239, 0.2);
         display: inline-block;
     }
 
@@ -487,21 +487,21 @@ st.markdown("""
     .intervention-card {
         background: rgba(15, 23, 42, 0.4);
         backdrop-filter: blur(8px);
-        border: 1px solid rgba(79, 139, 249, 0.15); 
+        border: 1px solid rgba(217, 70, 239, 0.15); 
         border-radius: 12px;
         padding: 20px; margin: 10px 0;
-        border-left: 4px solid #4F8BF9;
+        border-left: 4px solid #d946ef;
         transition: all 0.3s ease;
     }
     .intervention-card:hover {
         background: rgba(15, 23, 42, 0.6);
-        border-color: rgba(79, 139, 249, 0.4);
+        border-color: rgba(217, 70, 239, 0.4);
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .intervention-card h4 { color: #f1f5f9; margin: 0 0 8px 0; font-weight: 600;}
     .intervention-card p  { color: #cbd5e1; font-size: 0.95rem; margin: 4px 0; line-height: 1.5;}
     .evidence-tag {
-        background: rgba(79, 139, 249, 0.15); color: #60a5fa;
+        background: rgba(217, 70, 239, 0.15); color: #c084fc;
         padding: 4px 10px; border-radius: 6px;
         font-size: 0.75rem; display: inline-block; margin-top: 8px;
     }
@@ -528,7 +528,7 @@ st.markdown("""
     /* ---- Title styling ---- */
     .main-title {
         font-size: 1.8rem; font-weight: 700;
-        background: linear-gradient(135deg, #4F8BF9 0%, #38bdf8 50%, #818cf8 100%);
+        background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 50%, #f43f5e 100%);
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         margin-bottom: 5px;
     }
@@ -542,15 +542,15 @@ st.markdown("""
     }
 
     /* ---- Keyframes ---- */
-    @keyframes float {
-        0%   { transform: translateY(0px); }
-        50%  { transform: translateY(-5px); }
-        100% { transform: translateY(0px); }
+    @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }\n    @keyframes float {
+        0%   { transform: translateY(0px) rotate(0deg); }
+        50%  { transform: translateY(-6px) rotate(4deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
     }
     @keyframes pulse-red {
-        0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-        70%  { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); transform: scale(1); }
+        50%  { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); transform: scale(1.05); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); transform: scale(1); }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -711,7 +711,7 @@ if not st.session_state.auth["logged_in"]:
     with auth_col:
         st.markdown(
             '''<div style="text-align: center; margin-bottom: 2rem;">
-                <span style="font-size: 3.5rem; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #38bdf8 60%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);">SafePath AI</span><br>
+                <span style="font-size: 3.5rem; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #d946ef 60%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(139, 92, 246, 0.4);">SafePath AI</span><br>
                 <span style="color: #94a3b8; font-size: 1.1rem; letter-spacing: 0.5px;">Student Dropout Early Warning System</span>
             </div>''',
             unsafe_allow_html=True
@@ -789,7 +789,7 @@ with st.sidebar:
     st.markdown("""
     <div style="text-align:center; padding: 10px 0 18px 0;">
         <div style="font-size: 2.2rem;">🔮</div>
-        <div style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-top: 4px; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);">SafePath AI</div>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-top: 4px; text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);">SafePath AI</div>
         <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Student Dropout Risk System</div>
     </div>
     """, unsafe_allow_html=True)
@@ -872,7 +872,7 @@ with st.sidebar:
     st.markdown(f"""
     <div style="padding: 12px; background: #0f1724; border-radius: 10px;
                 border: 1px solid #1e3a5f; margin-top: 10px;">
-        <div style="color: #60a5fa; font-size: 0.75rem; font-weight: 600;">MODEL STATUS</div>
+        <div style="color: #c084fc; font-size: 0.75rem; font-weight: 600;">MODEL STATUS</div>
         <div style="color: #94a3b8; font-size: 0.8rem; margin-top: 6px;">
             ✅ Trained — {model_accuracy:.1%} accuracy
         </div>
@@ -972,7 +972,7 @@ def kpi_card(label, value, delta=None, icon=""):
         delta_html = f'<div class="kpi-delta" style="color:{color};">{delta}</div>'
     return f"""
     <div class="kpi-card">
-        <div style="font-size: 1.5rem;">{icon}</div>
+        <div style="font-size: 1.8rem; animation: float 3s ease-in-out infinite;">{icon}</div>
         <div class="kpi-value">{value}</div>
         <div class="kpi-label">{label}</div>
         {delta_html}
@@ -1049,7 +1049,7 @@ if page == "📊 Dashboard":
             students_df,
             x="risk_score",
             nbins=20,
-            color_discrete_sequence=["#4F8BF9"],
+            color_discrete_sequence=["#d946ef"],
             labels={"risk_score": "Risk Score"},
         )
         fig2.update_layout(
@@ -1255,7 +1255,7 @@ elif page == "🎯 Student Risk Analysis":
                 </div>
                 <div>
                     <div style="color: #64748b; font-size: 0.75rem;">PHONE</div>
-                    <div style="color: #60a5fa; font-weight: 600;"><a href="tel:{student['phone']}" style="color:#60a5fa;text-decoration:none;">{student['phone']}</a></div>
+                    <div style="color: #c084fc; font-weight: 600;"><a href="tel:{student['phone']}" style="color:#c084fc;text-decoration:none;">{student['phone']}</a></div>
                 </div>
                 <div>
                     <div style="color: #64748b; font-size: 0.75rem;">DISTRICT / STATE</div>
@@ -1339,7 +1339,7 @@ elif page == "🎯 Student Risk Analysis":
                 </div>
                 """, unsafe_allow_html=True)
             if len(matched_schemes) > 3:
-                st.markdown(f"<p style='color: #60a5fa; font-size: 0.85rem;'>+ {len(matched_schemes) - 3} more schemes match.</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='color: #c084fc; font-size: 0.85rem;'>+ {len(matched_schemes) - 3} more schemes match.</p>", unsafe_allow_html=True)
                 
             st.button("✉️ SMS Parent Application Details", key=f"sms_{student['student_id']}", help="Feature demo: This would send an SMS to the parent's phone.")
         else:
@@ -1440,7 +1440,7 @@ elif page == "🎯 Student Risk Analysis":
                 name="Student",
                 x=comp_df["indicator"],
                 y=comp_df["student_value"],
-                marker_color="#4F8BF9",
+                marker_color="#d946ef",
             ))
             fig_comp.add_trace(go.Bar(
                 name="Class Average",
@@ -1515,7 +1515,7 @@ elif page == "📋 Intervention Playbook":
                 </div>
                 <div style="margin-top: 8px;">
                     <span style="color: #64748b; font-size: 0.8rem;">Matching factors:</span>
-                    {''.join(f'<span style="background:#1e3a5f; color:#60a5fa; padding:2px 8px; border-radius:4px; font-size:0.75rem; margin-left:4px;">{t}</span>' for t in rec['matching_triggers'])}
+                    {''.join(f'<span style="background:#1e3a5f; color:#c084fc; padding:2px 8px; border-radius:4px; font-size:0.75rem; margin-left:4px;">{t}</span>' for t in rec['matching_triggers'])}
                 </div>
                 <div class="evidence-tag">📚 {rec['evidence']}</div>
             </div>
@@ -1640,7 +1640,7 @@ elif page == "🏛️ Government Schemes":
                         <div>
                             <h4 style="color: #e2e8f0; margin: 0 0 8px 0;">{scheme['scheme_name']}</h4>
                             <span style="background: {'#1e3a5f' if scheme['type'] == 'Central' else '#1a3a2f'};
-                                         color: {'#60a5fa' if scheme['type'] == 'Central' else '#10b981'};
+                                         color: {'#c084fc' if scheme['type'] == 'Central' else '#10b981'};
                                          padding: 2px 10px; border-radius: 6px; font-size: 0.75rem;">
                                 {scheme['type']}
                             </span>
@@ -1901,7 +1901,7 @@ elif page == "📈 Intervention Tracker":
                                 border: 1px solid #334155; border-top: 3px solid #f59e0b; border-radius: 12px; padding: 16px; text-align: center;">
                         <div style="font-size: 2rem;">{medals[i]}</div>
                         <div style="color: #e2e8f0; font-weight: 700; font-size: 1.1rem; margin-top: 8px;">{row['successful_interventions']} Wins</div>
-                        <div style="color: #60a5fa; font-size: 0.8rem; margin-top: 4px; line-height: 1.2;">{row['school'].split(' - ')[-1]}</div>
+                        <div style="color: #c084fc; font-size: 0.8rem; margin-top: 4px; line-height: 1.2;">{row['school'].split(' - ')[-1]}</div>
                         <div style="color: #64748b; font-size: 0.7rem; margin-top: 8px;">{row['zone']}</div>
                     </div>
                     """, unsafe_allow_html=True)
