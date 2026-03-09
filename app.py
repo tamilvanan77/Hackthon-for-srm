@@ -613,20 +613,36 @@ def ensure_student_schema(students_df, csv_path):
     return students_df
 
 
+import sqlalchemy
+from dotenv import load_dotenv
+
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:2005@localhost:5432/safepath_db")
+
+@st.cache_resource
+def get_db_engine():
+    return sqlalchemy.create_engine(DATABASE_URL)
+
+
 @st.cache_data
 def load_data():
-    base = os.path.dirname(os.path.abspath(__file__))
-    students_csv_path = os.path.join(base, "data", "students.csv")
-    students = pd.read_csv(students_csv_path)
-    students = ensure_student_schema(students, students_csv_path)
-    interventions = pd.read_csv(os.path.join(base, "data", "interventions.csv"))
-    schemes = pd.read_csv(os.path.join(base, "data", "schemes.csv"))
-    return students, interventions, schemes
+    try:
+        engine = get_db_engine()
+        students = pd.read_sql("SELECT * FROM students", con=engine)
+        interventions = pd.read_sql("SELECT * FROM interventions", con=engine)
+        schemes = pd.read_sql("SELECT * FROM schemes", con=engine)
+        return students, interventions, schemes
+    except Exception as e:
+        st.error(f"Error loading data from database: {e}")
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
 
 @st.cache_resource
-def train_model(students_csv_path):
-    df = pd.read_csv(students_csv_path)
+def train_model():
+    engine = get_db_engine()
+    df = pd.read_sql("SELECT * FROM students", con=engine)
+    if "location_type" not in df.columns:
+        df["location_type"] = "City"
     model = DropoutRiskModel()
     accuracy = model.train(df)
     return model, accuracy
@@ -635,16 +651,16 @@ def train_model(students_csv_path):
 # Try loading
 try:
     all_students_df, interventions_df, schemes_df = load_data()
-    base = os.path.dirname(os.path.abspath(__file__))
-    model, model_accuracy = train_model(os.path.join(base, "data", "students.csv"))
-    # Compute risk scores for all students
-    all_students_df["risk_score"] = model.predict_batch(all_students_df)
-    all_students_df["risk_level"] = all_students_df["risk_score"].apply(
-        lambda x: "High" if x > 60 else ("Medium" if x > 35 else "Low")
-    )
-    all_students_df = model.identify_high_risk_students(all_students_df)
-except FileNotFoundError:
-    st.error("⚠️ Data files not found. Please run `python generate_data.py` first to generate datasets.")
+    model, model_accuracy = train_model()
+    if not all_students_df.empty:
+        # Compute risk scores for all students
+        all_students_df["risk_score"] = model.predict_batch(all_students_df)
+        all_students_df["risk_level"] = all_students_df["risk_score"].apply(
+            lambda x: "High" if x > 60 else ("Medium" if x > 35 else "Low")
+        )
+        all_students_df = model.identify_high_risk_students(all_students_df)
+except Exception as e:
+    st.error(f"⚠️ Error initializing app with database: {e}")
     st.stop()
 
 
@@ -653,6 +669,7 @@ except FileNotFoundError:
 # ===================================================================
 import json
 
+base = os.path.dirname(os.path.abspath(__file__))
 USERS_FILE = os.path.join(base, "data", "users.json")
 
 def load_users():
@@ -689,65 +706,56 @@ if "switch_role" in _qp and st.session_state.auth.get("logged_in"):
 
 # ---- Login / Register page (shown when not authenticated) ----
 if not st.session_state.auth["logged_in"]:
-    if not st.session_state.show_register:
-        st.markdown('<div class="main-title" style="margin-top:80px;">🔐 Sign In</div>', unsafe_allow_html=True)
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    col1, auth_col, col3 = st.columns([1.2, 1, 1.2])
+    with auth_col:
         st.markdown(
-            '<div class="main-subtitle">Use your role account to access the dashboard</div>',
+            '''<div style="text-align: center; margin-bottom: 2rem;">
+                <span style="font-size: 3.5rem; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #38bdf8 60%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);">SafePath AI</span><br>
+                <span style="color: #94a3b8; font-size: 1.1rem; letter-spacing: 0.5px;">Student Dropout Early Warning System</span>
+            </div>''',
             unsafe_allow_html=True
         )
-        login_col = st.columns([1, 1, 1])[1]
-        with login_col:
-            username = st.text_input("Username", key="login_username")
-            password = st.text_input("Password", type="password", key="login_password")
-            if st.button("Sign In", width='stretch', type="primary", key="main_signin"):
-                acct = USER_ACCOUNTS.get(username.strip().lower())
-                if acct and password == acct["password"]:
-                    st.session_state.auth = {
-                        "logged_in": True,
-                        "username": username.strip().lower(),
-                        "role": acct["role"],
-                    }
-                    st.success("Login successful")
-                    st.rerun()
-                else:
-                    st.error("Invalid username or password")
+        with st.container(border=True):
+            tab_login, tab_register = st.tabs(["🔐 Sign In", "📝 Register"])
             
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.caption("Don't have an account yet?")
-            if st.button("Register a new account", width='stretch', key="go_to_register"):
-                st.session_state.show_register = True
-                st.rerun()
+            with tab_login:
+                st.markdown('<div class="main-subtitle" style="text-align:center;">Enter your credentials to continue</div>', unsafe_allow_html=True)
+                username = st.text_input("Username", key="login_username")
+                password = st.text_input("Password", type="password", key="login_password")
                 
-            st.caption("Demo users: `admin`, `staff`, `teacher`")
-    else:
-        st.markdown('<div class="main-title" style="margin-top:80px;">📝 Register</div>', unsafe_allow_html=True)
-        st.markdown(
-            '<div class="main-subtitle">Create a new account for the Early Warning System</div>',
-            unsafe_allow_html=True
-        )
-        reg_col = st.columns([1, 1, 1])[1]
-        with reg_col:
-            new_user = st.text_input("New Username", key="reg_user").strip().lower()
-            new_pass = st.text_input("New Password", type="password", key="reg_pass")
-            new_role = st.selectbox("Select Role", ["staff", "teacher", "admin"], key="reg_role")
-            
-            if st.button("Create Account", width='stretch', type="primary", key="main_register"):
-                if not new_user or not new_pass:
-                    st.error("Please fill in all fields.")
-                elif new_user in USER_ACCOUNTS:
-                    st.error("Username already exists. Please choose a different one.")
-                else:
-                    USER_ACCOUNTS[new_user] = {"password": new_pass, "role": new_role}
-                    save_users(USER_ACCOUNTS)
-                    st.success(f"Account '{new_user}' created successfully! You can now sign in.")
-                    st.session_state.show_register = False
-                    st.rerun()
-                    
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.caption("Already have an account?")
-            if st.button("Back to Sign In", width='stretch', key="go_to_login"):
-                st.session_state.show_register = False
-                st.rerun()
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("Sign In", width='stretch', type="primary", key="main_signin"):
+                    acct = USER_ACCOUNTS.get(username.strip().lower())
+                    if acct and password == acct["password"]:
+                        st.session_state.auth = {
+                            "logged_in": True,
+                            "username": username.strip().lower(),
+                            "role": acct["role"],
+                        }
+                        st.rerun()
+                    else:
+                        st.error("Invalid username or password")
+                        
+                st.markdown("<br>", unsafe_allow_html=True)
+                
+                
+            with tab_register:
+                st.markdown('<div class="main-subtitle" style="text-align:center;">Create a new account</div>', unsafe_allow_html=True)
+                new_user = st.text_input("New Username", key="reg_user").strip().lower()
+                new_pass = st.text_input("New Password", type="password", key="reg_pass")
+                new_role = st.selectbox("Select Role", ["staff", "teacher", "admin"], key="reg_role")
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("Create Account", width='stretch', type="primary", key="main_register"):
+                    if not new_user or not new_pass:
+                        st.error("Please fill in all fields.")
+                    elif new_user in USER_ACCOUNTS:
+                        st.error("Username already exists. Please choose a different one.")
+                    else:
+                        USER_ACCOUNTS[new_user] = {"password": new_pass, "role": new_role}
+                        save_users(USER_ACCOUNTS)
+                        st.success(f"Account '{new_user}' created successfully! You can now switch to the **Sign In** tab.")
     st.stop()
 
 # ---- Top Navbar (only when logged in) ----
@@ -766,42 +774,6 @@ st.markdown(f"""
         <a href="?logout=1" target="_self" class="topnav-logout" id="logout-btn">⏻ Logout</a>
     </div>
 </div>
-<script>
-(() => {{
-    const btn = document.getElementById("sidebar-toggle");
-    if (!btn) return;
-
-    const getParentDoc = () => {{
-        try {{
-            return window.parent && window.parent.document ? window.parent.document : document;
-        }} catch (e) {{
-            return document;
-        }}
-    }};
-
-    const toggleSidebar = () => {{
-        const p = getParentDoc();
-        const selectors = [
-            "[data-testid='stSidebarCollapsedControl'] button",
-            ".stSidebarCollapsedControl button",
-            "[data-testid='stSidebarCollapseButton']",
-            "[data-testid='collapsedControl']",
-            "button[aria-label*='sidebar' i]",
-            "button[title*='sidebar' i]"
-        ];
-
-        for (const sel of selectors) {{
-            const el = p.querySelector(sel);
-            if (el) {{
-                el.click();
-                return;
-            }}
-        }}
-    }};
-
-    btn.addEventListener("click", toggleSidebar);
-}})();
-</script>
 """, unsafe_allow_html=True)
 
 # Handle logout query param
@@ -916,13 +888,67 @@ with st.sidebar:
     # ---- Sidebar open/close toggle button at bottom ----
     st.markdown("""
     <div style="margin-top: 20px; text-align: center;">
-        <button onclick="window.parent.document.querySelector('[data-testid=stSidebarCollapseButton]') && window.parent.document.querySelector('[data-testid=stSidebarCollapseButton]').click()"
+        <button id="close-menu-btn" type="button"
             style="background:rgba(79,139,249,0.08); border:1px solid rgba(79,139,249,0.25);
                    color:#64748b; border-radius:8px; padding:6px 20px; cursor:pointer; font-size:0.78rem;">
             ← Close Menu
         </button>
     </div>
     """, unsafe_allow_html=True)
+
+    # Inject sidebar toggle Javascript
+    import streamlit.components.v1 as components
+    components.html("""
+    <script>
+    (() => {
+        const getParentDoc = () => {
+            try {
+                return window.parent && window.parent.document ? window.parent.document : document;
+            } catch (e) {
+                return document;
+            }
+        };
+
+        const toggleSidebar = () => {
+            const p = getParentDoc();
+            const selectors = [
+                "[data-testid='stSidebarCollapsedControl'] button",
+                ".stSidebarCollapsedControl button",
+                "[data-testid='stSidebarCollapseButton']",
+                "[data-testid='collapsedControl']",
+                "button[aria-label*='sidebar' i]",
+                "button[title*='sidebar' i]"
+            ];
+
+            for (const sel of selectors) {
+                const el = p.querySelector(sel);
+                if (el) {
+                    el.click();
+                    return;
+                }
+            }
+        };
+
+        // We use setInterval to ensure it attaches to dynamically rendered elements
+        const attachHandlers = () => {
+            const doc = getParentDoc();
+            const btnTop = doc.getElementById("sidebar-toggle");
+            if (btnTop && !btnTop.hasAttribute("data-sidebar-attached")) {
+                btnTop.addEventListener("click", toggleSidebar);
+                btnTop.setAttribute("data-sidebar-attached", "true");
+            }
+            const btnClose = doc.getElementById("close-menu-btn");
+            if (btnClose && !btnClose.hasAttribute("data-sidebar-attached")) {
+                btnClose.addEventListener("click", toggleSidebar);
+                btnClose.setAttribute("data-sidebar-attached", "true");
+            }
+        };
+        
+        setInterval(attachHandlers, 1000);
+        attachHandlers();
+    })();
+    </script>
+    """, height=0, width=0)
 
 
 # ===================================================================
@@ -1093,8 +1119,22 @@ if page == "📊 Dashboard":
         high_risk_df = students_df[students_df["high_risk_flag"]].sort_values("risk_priority", ascending=False).copy()
         high_risk_df["phone_link"] = high_risk_df["phone"].apply(lambda p: f"tel:{p}")
         display_cols = ["student_id", "name", "class", "district", "school", "phone_link", "attendance", "math_score", "risk_score", "risk_priority", "risk_level"]
+        
+        # Action Bar above table
+        c1, c2 = st.columns([4, 1])
+        with c1:
+            st.caption(f"Showing all {len(high_risk_df)} high-risk students in view.")
+        with c2:
+            st.download_button(
+                label="📥 Export to CSV",
+                data=high_risk_df[display_cols].to_csv(index=False).encode('utf-8'),
+                file_name=f"high_risk_students_{selected_zone}_{selected_district}.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
+            
         st.dataframe(
-            high_risk_df[display_cols].head(15),
+            high_risk_df[display_cols],  # Removed .head(15) restriction
             width='stretch',
             hide_index=True,
             column_config={
@@ -2024,27 +2064,35 @@ elif page == "📝 Student Data Entry":
                     edited_science = st.number_input("Science Score", min_value=0, max_value=100, value=int(student["science_score"]))
 
                 if st.form_submit_button("💾 Save Changes", type="primary", width='stretch'):
-                    csv_path = os.path.join(base, "data", "students.csv")
-                    source_df = pd.read_csv(csv_path)
-                    source_df = ensure_student_schema(source_df, csv_path)
-                    idx = source_df[source_df["student_id"] == selected_id].index
-                    if len(idx) == 1:
-                        row_idx = idx[0]
-                        source_df.loc[row_idx, "phone"] = edited_phone.strip()
-                        source_df.loc[row_idx, "address"] = edited_address.strip()
-                        source_df.loc[row_idx, "dropout_reason"] = edited_reason.strip() or "None reported"
-                        source_df.loc[row_idx, "attendance"] = int(edited_attendance)
-                        source_df.loc[row_idx, "engagement_score"] = int(edited_engagement)
-                        source_df.loc[row_idx, "distance_km"] = float(edited_distance)
-                        source_df.loc[row_idx, "math_score"] = int(edited_math)
-                        source_df.loc[row_idx, "science_score"] = int(edited_science)
-                        source_df.to_csv(csv_path, index=False)
+                    try:
+                        import sqlalchemy
+                        engine = get_db_engine()
+                        with engine.begin() as conn:
+                            # Use text query for safe execution
+                            query = sqlalchemy.text("""
+                                UPDATE students 
+                                SET phone = :phone, address = :address, dropout_reason = :reason, 
+                                    attendance = :attendance, engagement_score = :engagement, 
+                                    distance_km = :distance, math_score = :math, science_score = :science
+                                WHERE student_id = :sid
+                            """)
+                            conn.execute(query, {
+                                "phone": edited_phone.strip(), 
+                                "address": edited_address.strip(), 
+                                "reason": edited_reason.strip() or "None reported",
+                                "attendance": int(edited_attendance),
+                                "engagement": int(edited_engagement),
+                                "distance": float(edited_distance),
+                                "math": int(edited_math),
+                                "science": int(edited_science),
+                                "sid": selected_id
+                            })
                         st.cache_data.clear()
                         st.cache_resource.clear()
-                        st.success(f"✅ Student {student['name']} updated successfully!")
+                        st.success(f"✅ Student {student['name']} updated safely in the database!")
                         st.rerun()
-                    else:
-                        st.error("Unable to locate this student in the dataset.")
+                    except Exception as e:
+                        st.error(f"Error updating database: {e}")
 
     with tab_new:
         with st.form("staff_add_student"):
@@ -2056,7 +2104,7 @@ elif page == "📝 Student Data Entry":
                 new_class = st.selectbox("Class", [6, 7, 8, 9, 10])
                 new_section = st.selectbox("Section", ["A", "B", "C"])
                 new_phone = st.text_input("Phone Number")
-                # Defaults set to trigger 'High Risk' for hackathon demo
+                new_school = st.text_input("School Name", value=str(st.session_state.staff_district) + " Gov. High School")
                 new_attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=45)
                 new_math = st.number_input("Math Score", min_value=0, max_value=100, value=30)
                 new_location = st.selectbox("Location Type", ["City", "Village"])
@@ -2074,8 +2122,38 @@ elif page == "📝 Student Data Entry":
                 if not new_name.strip():
                     st.error("Student name is required.")
                 else:
-                    csv_path = os.path.join(base, "data", "students.csv")
-                    source_df = pd.read_csv(csv_path)
+                    try:
+                        import sqlalchemy
+                        engine = get_db_engine()
+                        with engine.begin() as conn:
+                            # Get new ID
+                            res = conn.execute(sqlalchemy.text("SELECT MAX(student_id) FROM students"))
+                            max_id = res.scalar() or 0
+                            new_id = max_id + 1
+                            
+                            query = sqlalchemy.text("""
+                                INSERT INTO students (
+                                    student_id, name, gender, class, section, school, zone, district, state, phone, address, 
+                                    attendance, math_score, science_score, language_score, meal_participation, distance_km, 
+                                    sibling_dropout, family_income, parent_education, engagement_score, dropout_reason, dropout_risk, location_type
+                                ) VALUES (
+                                    :sid, :name, :gender, :cls, :sec, :school, :zone, :district, 'Tamil Nadu', :phone, :address,
+                                    :att, :math, :sci, :lang, 'yes', :dist, :sib, :inc, :pedu, :eng, 'None reported', 0, :loc
+                                )
+                            """)
+                            conn.execute(query, {
+                                "sid": new_id, "name": new_name.strip(), "gender": new_gender, "cls": int(new_class), "sec": new_section,
+                                "school": new_school.strip(), "zone": st.session_state.staff_zone, "district": st.session_state.staff_district, 
+                                "phone": new_phone.strip(), "address": new_address.strip(), "att": int(new_attendance), 
+                                "math": int(new_math), "sci": int(new_science), "lang": int(new_language), "dist": float(new_distance),
+                                "sib": new_sibling, "inc": new_income, "pedu": new_parent_edu, "eng": int(new_engagement), "loc": new_location
+                            })
+                        st.cache_data.clear()
+                        st.cache_resource.clear()
+                        st.success(f"✅ Added new student {new_name} to {new_school} in the database!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Error adding student to database: {e}")
                     new_id = int(source_df["student_id"].max()) + 1
                     new_row = {
                         "student_id": new_id,
