@@ -617,7 +617,14 @@ import sqlalchemy
 from dotenv import load_dotenv
 
 load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:2005@localhost:5432/safepath_db")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Fallback for local development only
+if not DATABASE_URL:
+    DATABASE_URL = "postgresql://postgres:2005@localhost:5432/safepath_db"
+    if os.getenv("VERCEL"):
+        st.error("⚠️ No Cloud Database found. Please set DATABASE_URL in Vercel environment variables.")
+
 
 @st.cache_resource
 def get_db_engine():
